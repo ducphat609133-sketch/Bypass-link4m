@@ -1,296 +1,188 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Link4m Bypass - Devils Will Rise</title>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',sans-serif}
-        .wrapper{width:90%;max-width:500px;text-align:center;padding:20px}
-        .logo{font-family:'Courier New',monospace;font-size:clamp(24px,5vw,36px);font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c,0 0 40px #ff003c;letter-spacing:3px;margin-bottom:5px;animation:flicker 2s infinite alternate}
-        @keyframes flicker{0%,100%{opacity:1}50%{opacity:0.8}}
-        .subtitle{color:#666;font-size:11px;margin-bottom:25px;letter-spacing:2px}
-        .subtitle span{color:#ff003c}
-        .card{background:#111;border:1px solid #222;border-radius:16px;padding:25px;box-shadow:0 0 40px rgba(255,0,60,0.1)}
-        .input-group{position:relative;margin-bottom:15px}
-        .input-group input{width:100%;padding:15px 45px 15px 18px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:15px;outline:none;transition:all 0.3s}
-        .input-group input:focus{border-color:#ff003c;box-shadow:0 0 20px rgba(255,0,60,0.2)}
-        .input-group input::placeholder{color:#555}
-        .input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#555;font-size:18px;pointer-events:none;transition:color 0.3s}
-        .input-group input:focus~.input-icon{color:#ff003c}
-        .btn-bypass{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:2px;transition:all 0.3s;text-transform:uppercase}
-        .btn-bypass:hover{background:#e00035;box-shadow:0 0 30px rgba(255,0,60,0.5);transform:translateY(-2px)}
-        .btn-bypass:active{transform:scale(0.97)}
-        .btn-bypass.loading{pointer-events:none;opacity:0.7}
-        .result-box{margin-top:18px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:18px;min-height:55px;display:flex;align-items:center;justify-content:center;transition:all 0.3s;word-break:break-all;cursor:pointer}
-        .result-box.success{border-color:#00ff41;box-shadow:0 0 20px rgba(0,255,65,0.1)}
-        .result-box.error{border-color:#ff003c}
-        .result-text{color:#00ff41;font-size:15px;font-family:'Courier New',monospace}
-        .result-text:hover{text-decoration:underline}
-        .result-placeholder{color:#333;font-size:13px}
-        .copy-hint{color:#666;font-size:11px;margin-top:8px;opacity:0;transition:opacity 0.3s}
-        .copy-hint.visible{opacity:1}
-        .spinner{width:22px;height:22px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.7s linear infinite;display:none;margin:10px auto 0}
-        .spinner.active{display:block}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:10px 25px;border-radius:20px;font-weight:bold;font-size:13px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
-        .toast.show{opacity:1}
-        .quick-links{margin-top:20px;display:flex;justify-content:center;gap:15px;flex-wrap:wrap}
-        .quick-link{color:#444;font-size:11px;text-decoration:none;transition:color 0.2s;cursor:pointer}
-        .quick-link:hover{color:#ff003c}
-        .log-box{margin-top:10px;background:#0a0a0a;border-radius:8px;padding:10px;max-height:100px;overflow-y:auto;display:none}
-        .log-box.active{display:block}
-        .log-line{color:#555;font-size:10px;font-family:'Courier New',monospace;text-align:left;padding:2px 0}
-        .log-line.good{color:#00ff41}
-        .log-line.bad{color:#ff4444}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Link4m Bypass - Devils Will Rise</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',sans-serif}
+.wrapper{width:90%;max-width:500px;text-align:center;padding:20px}
+.logo{font-family:'Courier New',monospace;font-size:clamp(24px,5vw,36px);font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c,0 0 40px #ff003c;letter-spacing:3px;margin-bottom:5px;animation:flicker 2s infinite alternate}
+@keyframes flicker{0%,100%{opacity:1}50%{opacity:0.8}}
+.subtitle{color:#666;font-size:11px;margin-bottom:25px;letter-spacing:2px}
+.subtitle span{color:#ff003c}
+.card{background:#111;border:1px solid #222;border-radius:16px;padding:25px;box-shadow:0 0 40px rgba(255,0,60,0.1)}
+.input-group{position:relative;margin-bottom:15px}
+.input-group input{width:100%;padding:15px 45px 15px 18px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:15px;outline:none;transition:all 0.3s}
+.input-group input:focus{border-color:#ff003c;box-shadow:0 0 20px rgba(255,0,60,0.2)}
+.input-group input::placeholder{color:#555}
+.input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#555;font-size:18px;pointer-events:none}
+.input-group input:focus~.input-icon{color:#ff003c}
+.btn-bypass{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:2px;text-transform:uppercase}
+.btn-bypass:active{transform:scale(0.97)}
+.btn-bypass.loading{pointer-events:none;opacity:0.7}
+.result-box{margin-top:18px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:18px;min-height:55px;display:flex;align-items:center;justify-content:center;word-break:break-all;cursor:pointer}
+.result-box.success{border-color:#00ff41;box-shadow:0 0 20px rgba(0,255,65,0.1)}
+.result-box.error{border-color:#ff003c}
+.result-text{color:#00ff41;font-size:15px;font-family:'Courier New',monospace}
+.result-placeholder{color:#333;font-size:13px}
+.copy-hint{color:#666;font-size:11px;margin-top:8px;opacity:0}
+.copy-hint.visible{opacity:1}
+.spinner{width:22px;height:22px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.7s linear infinite;display:none;margin:10px auto 0}
+.spinner.active{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:10px 25px;border-radius:20px;font-weight:bold;font-size:13px;z-index:999;opacity:0;pointer-events:none}
+.toast.show{opacity:1}
+.quick-links{margin-top:20px;display:flex;justify-content:center;gap:15px}
+.quick-link{color:#444;font-size:11px;cursor:pointer}
+.quick-link:hover{color:#ff003c}
+.log-box{margin-top:10px;background:#0a0a0a;border-radius:8px;padding:10px;max-height:100px;overflow-y:auto;display:none}
+.log-box.active{display:block}
+.log-line{color:#555;font-size:10px;font-family:'Courier New',monospace;text-align:left;padding:2px 0}
+.log-line.good{color:#00ff41}
+.log-line.bad{color:#ff4444}
+</style>
 </head>
 <body>
-    <div class="toast" id="toast">✅ Đã copy!</div>
-    <div class="wrapper">
-        <div class="logo">DEVILS WILL RISE</div>
-        <div class="subtitle">Owner <span>@DP</span> | <span>@SGCodexs</span></div>
-        <div class="card">
-            <div class="input-group">
-                <input type="text" id="linkInput" placeholder="Dán link Link4m vào đây..." autocomplete="off" autofocus>
-                <span class="input-icon">🔗</span>
-            </div>
-            <button class="btn-bypass" id="btnBypass" onclick="bypassLink()">⚡ BYPASS NGAY</button>
-            <div class="spinner" id="spinner"></div>
-            <div class="result-box" id="resultBox" onclick="copyResult()">
-                <span class="result-placeholder">Link gốc hoặc key sẽ hiện ở đây...</span>
-            </div>
-            <div class="copy-hint" id="copyHint">👆 Click vào link để copy</div>
-            <div class="log-box" id="logBox"></div>
-        </div>
-        <div class="quick-links">
-            <span class="quick-link" onclick="clearInput()">🗑 Clear</span>
-            <span style="color:#333">|</span>
-            <span class="quick-link">💀 @SGCodexs</span>
-        </div>
-    </div>
-    <script>
-        let currentResult = '';
-        document.getElementById('linkInput').addEventListener('keydown',function(e){if(e.key==='Enter')bypassLink()});
-
-        function addLog(msg,good){const lb=document.getElementById('logBox');lb.classList.add('active');const cls=good===true?'good':(good===false?'bad':'');lb.innerHTML+='<div class="log-line '+cls+'">'+msg+'</div>';lb.scrollTop=lb.scrollHeight}
-
-        async function bypassLink(){
-            const input=document.getElementById('linkInput'),btn=document.getElementById('btnBypass'),
-                  spinner=document.getElementById('spinner'),resultBox=document.getElementById('resultBox'),
-                  copyHint=document.getElementById('copyHint'),logBox=document.getElementById('logBox'),
-                  url=input.value.trim();
-            logBox.innerHTML='';logBox.classList.add('active');
-            if(!url){showResult('⚠ Vui lòng nhập link Link4m!',false);return}
-            if(!url.includes('link4m.com')&&!url.includes('link4m.')){showResult('❌ Đây không phải link Link4m!',false);return}
-            btn.classList.add('loading');btn.textContent='ĐANG XỬ LÝ...';spinner.classList.add('active');
-            resultBox.className='result-box';resultBox.innerHTML='';copyHint.classList.remove('visible');
-            currentResult='';
-            let finalLink=null;
-            addLog('🔍 Bắt đầu bypass: '+url.substring(0,50)+'...');
-
-            // ===== METHOD 1: code.jquery.com proxy (tin cậy nhất) =====
-            addLog('📡 Method 1: Fetch thẳng HTML qua multiple proxies...');
-            const proxyList=[
-                'https://api.codetabs.com/v1/proxy?quest=',
-                'https://corsproxy.io/?',
-                'https://api.allorigins.win/raw?url=',
-                'https://cors-anywhere.herokuapp.com/',
-            ];
-            for(let i=0;i<proxyList.length;i++){
-                if(finalLink)break;
-                try{
-                    addLog('  Thử proxy #'+(i+1)+'...');
-                    const proxyUrl=proxyList[i]+encodeURIComponent(url);
-                    const controller=new AbortController();
-                    const timeout=setTimeout(()=>controller.abort(),8000);
-                    const res=await fetch(proxyUrl,{signal:controller.signal});
-                    clearTimeout(timeout);
-                    if(res.ok){
-                        const html=await res.text();
-                        addLog('  ✅ Proxy #'+(i+1)+' OK - Đang phân tích HTML...','good');
-                        const extracted=extractLinksFromHTML(html,url);
-                        if(extracted){finalLink=extracted;addLog('  🎯 TÌM THẤY LINK!','good');break}
-                        else{addLog('  ⚠ Không tìm thấy link trong HTML')}
-                    }else{addLog('  ❌ HTTP '+res.status,'bad')}
-                }catch(e){addLog('  ❌ Lỗi: '+e.message.substring(0,40),'bad')}
-            }
-
-            // ===== METHOD 2: Fetch gốc không proxy =====
-            if(!finalLink){
-                addLog('📡 Method 2: Fetch trực tiếp (no-cors)...');
-                try{
-                    const res=await fetch(url,{mode:'no-cors'});
-                    addLog('  ✅ Có response (không đọc được body do CORS)');
-                }catch(e){addLog('  ❌ Lỗi fetch trực tiếp','bad')}
-            }
-
-            // ===== METHOD 3: Dùng textise dot iitty =====
-            if(!finalLink){
-                addLog('📡 Method 3: Textise API...');
-                try{
-                    const res=await fetch('https://r.jina.ai/http://'+url.replace('https://','').replace('http://',''),{
-                        headers:{'Accept':'text/plain','X-Return-Format':'text'}
-                    });
-                    if(res.ok){
-                        const text=await res.text();
-                        addLog('  ✅ Textise OK - Đang tìm link...','good');
-                        const urls=text.match(/https?:\/\/[^\s\n\r\)\"]+/gi);
-                        if(urls){
-                            const candidates=urls.filter(u=>!u.includes('link4m')&&!u.includes('jina.ai')&&!u.includes('google')&&!u.includes('facebook')&&!u.includes('twitter')&&!u.includes('youtube')&&!u.includes('instagram')&&!u.includes('tiktok')&&!u.includes('cloudflare')&&!u.includes('cdn')&&!u.includes('.js')&&!u.includes('.css')&&!u.includes('.png')&&!u.includes('.jpg')&&!u.includes('.svg')&&!u.includes('.ico')&&!u.includes('ajax')&&!u.includes('api.')&&!u.includes('w3.org')&&u.length>20);
-                            if(candidates.length>0){
-                                finalLink=candidates.reduce((a,b)=>a.length>b.length?a:b);
-                                addLog('  🎯 TÌM THẤY LINK!','good');
-                            }
-                        }
-                    }
-                }catch(e){addLog('  ❌ Lỗi: '+e.message.substring(0,40),'bad')}
-            }
-
-            // ===== METHOD 4: textise.ai =====
-            if(!finalLink){
-                addLog('📡 Method 4: Jina AI Reader...');
-                try{
-                    const res=await fetch('https://r.jina.ai/https://'+url.replace('https://','').replace('http://',''),{
-                        headers:{'Accept':'text/markdown','X-Respond-With':'markdown'}
-                    });
-                    if(res.ok){
-                        const md=await res.text();
-                        addLog('  ✅ Jina OK - Đang tìm link...','good');
-                        const urls=md.match(/https?:\/\/[^\s\n\r\)\"]+/gi);
-                        if(urls){
-                            const candidates=urls.filter(u=>!u.includes('link4m')&&!u.includes('jina.ai')&&u.length>20);
-                            if(candidates.length>0){
-                                finalLink=candidates.reduce((a,b)=>a.length>b.length?a:b);
-                                addLog('  🎯 TÌM THẤY LINK!','good');
-                            }
-                        }
-                    }
-                }catch(e){addLog('  ❌ Lỗi: '+e.message.substring(0,40),'bad')}
-            }
-
-            btn.classList.remove('loading');btn.textContent='⚡ BYPASS NGAY';spinner.classList.remove('active');
-            if(finalLink){
-                // Clean link
-                finalLink=finalLink.replace(/\\/g,'').replace(/&amp;/g,'&').replace(/%3A/g,':').replace(/%2F/g,'/');
-                if(!finalLink.startsWith('http'))finalLink='https://'+finalLink.replace(/^\/+/,'');
-                currentResult=finalLink;
-                showResult(finalLink,true);
-                addLog('✅ THÀNH CÔNG! Link gốc: '+finalLink.substring(0,60)+(finalLink.length>60?'...':''),'good');
-            }else{
-                showResult('❌ Không bypass được. Thử link khác hoặc dùng VPN.',false);
-                addLog('💀 THẤT BẠI: Không method nào lấy được link','bad');
-            }
-        }
-
-        function extractLinksFromHTML(html,originalUrl){
-            // Decode HTML entities trước
-            html=html.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\\\//g,'/').replace(/\\"/g,'"');
-            
-            // Pattern mạnh nhất - tìm tất cả URL
-            const patterns=[
-                // Meta refresh
-                /<meta[^>]*http-equiv=["']refresh["'][^>]*content=["']\d+;\s*url=([^"'\s>]+)/i,
-                /content=["']\d+;\s*url=([^"'\s>]+)/i,
-                // Window location
-                /window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']+)["']/i,
-                /location\.(?:replace|assign|href)\s*\(\s*["']([^"']+)["']\s*\)/i,
-                // direct link
-                /<a[^>]*href=["'](https?:\/\/[^"']+?)["'][^>]*>\s*(?:click|continue|get|download|tải|nhận|here|tiếp|truy cập|vào|link|đi|go|open|access|visit)\s*<\/a>/i,
-                /<a[^>]*href=["'](https?:\/\/[^"']+?)["'][^>]*class=["'][^"']*(?:btn|button|link|redirect|go|get|dl|download)[^"']*["']/i,
-                // data attributes
-                /data-(?:url|link|href|redirect|target|dest|go)\s*=\s*["']([^"']+)["']/i,
-                // onclick redirect
-                /onclick\s*=\s*["'][^"']*(?:location|window\.open|href)\s*[=\(]\s*["']([^"']+)["']/i,
-                // Base64 encoded
-                /atob\s*\(\s*["']([A-Za-z0-9+/=]+)["']\s*\)/,
-                // Form action
-                /<form[^>]*action=["'](https?:\/\/[^"']+)["']/i,
-                // Script variables
-                /(?:var|let|const)\s+\w+\s*=\s*["'](https?:\/\/[^\s"'<>]+?)["']/gi,
-                // JSON trong script
-                /["'](?:url|link|redirect|target|dest|download|file|get)["']\s*:\s*["'](https?:\/\/[^"']+)["']/gi,
-            ];
-
-            for(const pattern of patterns){
-                const match=html.match(pattern);
-                if(match){
-                    let found=match[1]||match[0];
-                    // Nếu là regex toàn cục thì lấy capture group 1
-                    if(pattern.flags&&pattern.flags.includes('g')){
-                        const m2=pattern.exec(html);
-                        if(m2&&m2[1])found=m2[1];
-                    }
-                    if(found&&(found.startsWith('http')||found.startsWith('//'))){
-                        if(found.startsWith('//'))found='https:'+found;
-                        if(!found.includes('link4m')&&!found.includes('google.com')&&!found.includes('facebook.com')&&!found.includes('twitter.com')&&!found.includes('youtube.com')&&!found.includes('instagram.com')&&!found.includes('tiktok.com')&&!found.includes('cloudflare.com')&&!found.includes('w3.org')&&!found.includes('schema.org')&&!found.includes('.js')&&!found.includes('.css')&&!found.includes('.png')&&!found.includes('.jpg')&&!found.includes('.svg')&&!found.includes('.ico')&&!found.includes('ajax')&&!found.includes('api.')&&found.length>15){
-                            return found;
-                        }
-                    }
-                }
-            }
-
-            // Fallback: tìm URL dài nhất
-            const allUrls=html.match(/https?:\/\/[^\s"'<>\[\]{}()]+/gi);
-            if(allUrls){
-                const blacklist=['link4m','google','facebook','twitter','youtube','instagram','tiktok','cloudflare','w3.org','schema.org','cdn','.js','.css','.png','.jpg','.svg','.ico','ajax','api.','gtag','analytics','gstatic','fonts.'];
-                const candidates=allUrls.filter(u=>{
-                    const lower=u.toLowerCase();
-                    return !blacklist.some(b=>lower.includes(b))&&u.length>25;
-                });
-                if(candidates.length>0){
-                    // Ưu tiên URL có các keyword đặc trưng
-                    const priority=['drive','download','file','get','key','code','paste','source','dll','media','share','direct','raw','bit.','mega','dropbox','mediafire','zippy','gg','dow','dl.'];
-                    for(const p of priority){
-                        const found=candidates.find(u=>u.toLowerCase().includes(p));
-                        if(found)return found;
-                    }
-                    return candidates.reduce((a,b)=>a.length>b.length?a:b);
-                }
-            }
-            return null;
-        }
-
-        function showResult(msg,success){
-            const rb=document.getElementById('resultBox'),ch=document.getElementById('copyHint');
-            rb.className='result-box';
-            if(success){
-                rb.classList.add('success');
-                rb.innerHTML='<span class="result-text">'+escapeHtml(msg)+'</span>';
-                ch.classList.add('visible');
-            }else{
-                rb.classList.add('error');
-                rb.innerHTML='<span style="color:#ff4444;font-size:14px">'+escapeHtml(msg)+'</span>';
-                ch.classList.remove('visible');
-            }
-        }
-
-        function copyResult(){
-            if(currentResult&&currentResult.startsWith('http')){
-                navigator.clipboard.writeText(currentResult).then(showToast).catch(()=>{
-                    const ta=document.createElement('textarea');
-                    ta.value=currentResult;
-                    ta.style.position='fixed';ta.style.left='-9999px';
-                    document.body.appendChild(ta);ta.select();
-                    document.execCommand('copy');document.body.removeChild(ta);
-                    showToast();
-                });
-            }
-        }
-
-        function showToast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500)}
-        function clearInput(){
-            document.getElementById('linkInput').value='';
-            document.getElementById('resultBox').className='result-box';
-            document.getElementById('resultBox').innerHTML='<span class="result-placeholder">Link gốc hoặc key sẽ hiện ở đây...</span>';
-            document.getElementById('copyHint').classList.remove('visible');
-            document.getElementById('logBox').innerHTML='';
-            document.getElementById('logBox').classList.remove('active');
-            currentResult='';
-            document.getElementById('linkInput').focus();
-        }
-        function escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML}
-    </script>
+<div class="toast" id="toast">✅ Đã copy!</div>
+<div class="wrapper">
+<div class="logo">DEVILS WILL RISE</div>
+<div class="subtitle">Owner <span>@DP</span> | <span>@SGCodexs</span></div>
+<div class="card">
+<div class="input-group">
+<input type="text" id="linkInput" placeholder="Dán link Link4m vào đây..." autocomplete="off" autofocus>
+<span class="input-icon">🔗</span>
+</div>
+<button class="btn-bypass" id="btnBypass" onclick="bypassLink()">⚡ BYPASS NGAY</button>
+<div class="spinner" id="spinner"></div>
+<div class="result-box" id="resultBox" onclick="copyResult()">
+<span class="result-placeholder">Link gốc hoặc key sẽ hiện ở đây...</span>
+</div>
+<div class="copy-hint" id="copyHint">👆 Click vào link để copy</div>
+<div class="log-box" id="logBox"></div>
+</div>
+<div class="quick-links">
+<span class="quick-link" onclick="clearInput()">🗑 Clear</span>
+<span style="color:#333">|</span>
+<span class="quick-link">💀 @SGCodexs</span>
+</div>
+</div>
+<script>
+var currentResult='';
+document.getElementById('linkInput').addEventListener('keydown',function(e){if(e.key==='Enter')bypassLink()});
+function addLog(msg,good){var lb=document.getElementById('logBox');lb.classList.add('active');var cls=good===true?'good':(good===false?'bad':'');lb.innerHTML+='<div class="log-line '+cls+'">'+msg+'</div>';lb.scrollTop=lb.scrollHeight}
+async function bypassLink(){
+var input=document.getElementById('linkInput'),btn=document.getElementById('btnBypass'),spinner=document.getElementById('spinner'),resultBox=document.getElementById('resultBox'),copyHint=document.getElementById('copyHint'),logBox=document.getElementById('logBox'),url=input.value.trim();
+logBox.innerHTML='';logBox.classList.add('active');
+if(!url){showResult('⚠ Vui lòng nhập link Link4m!',false);return}
+if(!url.includes('link4m.com')&&!url.includes('link4m.')){showResult('❌ Đây không phải link Link4m!',false);return}
+btn.classList.add('loading');btn.textContent='ĐANG XỬ LÝ...';spinner.classList.add('active');
+resultBox.className='result-box';resultBox.innerHTML='';copyHint.classList.remove('visible');
+currentResult='';var finalLink=null;
+addLog('🔍 Bắt đầu bypass...');
+var proxyList=['https://api.codetabs.com/v1/proxy?quest=','https://corsproxy.io/?','https://api.allorigins.win/raw?url='];
+for(var i=0;i<proxyList.length;i++){
+if(finalLink)break;
+try{
+addLog('Thử proxy #'+(i+1)+'...');
+var proxyUrl=proxyList[i]+encodeURIComponent(url);
+var controller=new AbortController();
+var timeout=setTimeout(function(){controller.abort()},8000);
+var res=await fetch(proxyUrl,{signal:controller.signal});
+clearTimeout(timeout);
+if(res.ok){
+var html=await res.text();
+addLog('✅ Proxy #'+(i+1)+' OK','good');
+var extracted=extractLinksFromHTML(html);
+if(extracted){finalLink=extracted;addLog('🎯 TÌM THẤY LINK!','good');break}
+else{addLog('⚠ Không tìm thấy link')}
+}else{addLog('❌ HTTP '+res.status,'bad')}
+}catch(e){addLog('❌ Lỗi: '+e.message.substring(0,40),'bad')}
+}
+if(!finalLink){
+addLog('📡 Method 2: Jina AI...');
+try{
+var jinaRes=await fetch('https://r.jina.ai/https://'+url.replace('https://','').replace('http://',''),{headers:{'Accept':'text/markdown'}});
+if(jinaRes.ok){
+var md=await jinaRes.text();
+addLog('✅ Jina OK','good');
+var urls=md.match(/https?:\/\/[^\s\n\r\)\"]+/gi);
+if(urls){
+var candidates=urls.filter(function(u){return !u.includes('link4m')&&!u.includes('jina.ai')&&u.length>20});
+if(candidates.length>0){finalLink=candidates.reduce(function(a,b){return a.length>b.length?a:b});addLog('🎯 TÌM THẤY LINK!','good')}
+}
+}
+}catch(e){addLog('❌ Lỗi: '+e.message.substring(0,40),'bad')}
+}
+btn.classList.remove('loading');btn.textContent='⚡ BYPASS NGAY';spinner.classList.remove('active');
+if(finalLink){
+finalLink=finalLink.replace(/\\/g,'').replace(/&amp;/g,'&');
+if(!finalLink.startsWith('http'))finalLink='https://'+finalLink.replace(/^\/+/,'');
+currentResult=finalLink;
+showResult(finalLink,true);
+addLog('✅ THÀNH CÔNG!','good');
+}else{
+showResult('❌ Không bypass được link này!',false);
+addLog('💀 THẤT BẠI','bad');
+}
+}
+function extractLinksFromHTML(html){
+html=html.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\\\//g,'/');
+var patterns=[
+/<meta[^>]*http-equiv=["']refresh["'][^>]*content=["']\d+;\s*url=([^"'\s>]+)/i,
+/window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']+)["']/i,
+/location\.(?:replace|assign|href)\s*\(\s*["']([^"']+)["']\s*\)/i,
+/<a[^>]*href=["'](https?:\/\/[^"']+?)["'][^>]*>\s*(?:click|continue|get|download|tải|nhận|here|tiếp|vào|link|đi|go|open|access|visit)\s*<\/a>/i,
+/data-(?:url|link|href|redirect|target|dest|go)\s*=\s*["']([^"']+)["']/i,
+/atob\s*\(\s*["']([A-Za-z0-9+/=]+)["']\s*\)/,
+/<form[^>]*action=["'](https?:\/\/[^"']+)["']/i
+];
+for(var i=0;i<patterns.length;i++){
+var match=html.match(patterns[i]);
+if(match&&match[1]){
+var found=match[1];
+if(found.startsWith('//'))found='https:'+found;
+if(found.startsWith('http')&&!found.includes('link4m')&&!found.includes('google.com')&&!found.includes('facebook.com')&&!found.includes('.js')&&!found.includes('.css')&&!found.includes('.png')&&!found.includes('.jpg')&&found.length>15)return found;
+}
+}
+var allUrls=html.match(/https?:\/\/[^\s"'<>\[\]{}()]+/gi);
+if(allUrls){
+var blacklist=['link4m','google','facebook','twitter','youtube','instagram','cdn','.js','.css','.png','.jpg','.svg','.ico','ajax','api.'];
+var candidates=allUrls.filter(function(u){var lower=u.toLowerCase();return !blacklist.some(function(b){return lower.includes(b)})&&u.length>25});
+if(candidates.length>0){
+var priority=['drive','download','file','get','key','code','paste','source','dll','media','share','direct','raw','bit.','mega','dropbox','mediafire','zippy','gg'];
+for(var j=0;j<priority.length;j++){var found=candidates.find(function(u){return u.toLowerCase().includes(priority[j])});if(found)return found}
+return candidates.reduce(function(a,b){return a.length>b.length?a:b});
+}
+}
+return null;
+}
+function showResult(msg,success){
+var rb=document.getElementById('resultBox'),ch=document.getElementById('copyHint');
+rb.className='result-box';
+if(success){rb.classList.add('success');rb.innerHTML='<span class="result-text">'+escapeHtml(msg)+'</span>';ch.classList.add('visible')}
+else{rb.classList.add('error');rb.innerHTML='<span style="color:#ff4444;font-size:14px">'+escapeHtml(msg)+'</span>';ch.classList.remove('visible')}
+}
+function copyResult(){
+if(currentResult&&currentResult.startsWith('http')){
+navigator.clipboard.writeText(currentResult).then(showToast).catch(function(){
+var ta=document.createElement('textarea');ta.value=currentResult;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast()
+})
+}
+}
+function showToast(){var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1500)}
+function clearInput(){
+document.getElementById('linkInput').value='';
+document.getElementById('resultBox').className='result-box';
+document.getElementById('resultBox').innerHTML='<span class="result-placeholder">Link gốc hoặc key sẽ hiện ở đây...</span>';
+document.getElementById('copyHint').classList.remove('visible');
+document.getElementById('logBox').innerHTML='';
+document.getElementById('logBox').classList.remove('active');
+currentResult='';
+document.getElementById('linkInput').focus();
+}
+function escapeHtml(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
+</script>
 </body>
 </html>
