@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link4m Bypass - Devils Will Rise</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',sans-serif}
+        .wrapper{width:90%;max-width:500px;text-align:center;padding:20px}
+        .logo{font-family:'Courier New',monospace;font-size:clamp(24px,5vw,36px);font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c,0 0 40px #ff003c;letter-spacing:3px;margin-bottom:5px;animation:flicker 2s infinite alternate}
+        @keyframes flicker{0%,100%{opacity:1}50%{opacity:0.8}}
+        .subtitle{color:#666;font-size:11px;margin-bottom:25px;letter-spacing:2px}
+        .subtitle span{color:#ff003c}
+        .card{background:#111;border:1px solid #222;border-radius:16px;padding:25px;box-shadow:0 0 40px rgba(255,0,60,0.1)}
+        .input-group{position:relative;margin-bottom:15px}
+        .input-group input{width:100%;padding:15px 45px 15px 18px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:15px;outline:none;transition:all 0.3s}
+        .input-group input:focus{border-color:#ff003c;box-shadow:0 0 20px rgba(255,0,60,0.2)}
+        .input-group input::placeholder{color:#555}
+        .input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#555;font-size:18px;pointer-events:none;transition:color 0.3s}
+        .input-group input:focus~.input-icon{color:#ff003c}
+        .btn-bypass{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:2px;transition:all 0.3s;text-transform:uppercase}
+        .btn-bypass:hover{background:#e00035;box-shadow:0 0 30px rgba(255,0,60,0.5);transform:translateY(-2px)}
+        .btn-bypass:active{transform:scale(0.97)}
+        .btn-bypass.loading{pointer-events:none;opacity:0.7}
+        .result-box{margin-top:18px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:18px;min-height:55px;display:flex;align-items:center;justify-content:center;transition:all 0.3s;word-break:break-all;cursor:pointer}
+        .result-box.success{border-color:#00ff41;box-shadow:0 0 20px rgba(0,255,65,0.1)}
+        .result-box.error{border-color:#ff003c}
+        .result-text{color:#00ff41;font-size:15px;font-family:'Courier New',monospace}
+        .result-text:hover{text-decoration:underline}
+        .result-placeholder{color:#333;font-size:13px}
+        .copy-hint{color:#666;font-size:11px;margin-top:8px;opacity:0;transition:opacity 0.3s}
+        .copy-hint.visible{opacity:1}
+        .spinner{width:22px;height:22px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.7s linear infinite;display:none;margin:10px auto 0}
+        .spinner.active{display:block}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:10px 25px;border-radius:20px;font-weight:bold;font-size:13px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+        .toast.show{opacity:1}
+        .quick-links{margin-top:20px;display:flex;justify-content:center;gap:15px;flex-wrap:wrap}
+        .quick-link{color:#444;font-size:11px;text-decoration:none;transition:color 0.2s;cursor:pointer}
+        .quick-link:hover{color:#ff003c}
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast">✅ Đã copy!</div>
+    <div class="wrapper">
+        <div class="logo">DEVILS WILL RISE</div>
+        <div class="subtitle">Owner <span>@UnknownGuy9876</span> | <span>@SGCodexs</span></div>
+        <div class="card">
+            <div class="input-group">
+                <input type="text" id="linkInput" placeholder="Dán link Link4m vào đây..." autocomplete="off" autofocus>
+                <span class="input-icon">🔗</span>
+            </div>
+            <button class="btn-bypass" id="btnBypass" onclick="bypassLink()">⚡ BYPASS NGAY</button>
+            <div class="spinner" id="spinner"></div>
+            <div class="result-box" id="resultBox" onclick="copyResult()">
+                <span class="result-placeholder">Link gốc hoặc key sẽ hiện ở đây...</span>
+            </div>
+            <div class="copy-hint" id="copyHint">👆 Click vào link để copy</div>
+        </div>
+        <div class="quick-links">
+            <span class="quick-link" onclick="clearInput()">🗑 Clear</span>
+            <span style="color:#333">|</span>
+            <span class="quick-link">💀 @SGCodexs</span>
+        </div>
+    </div>
+    <script>
+        let currentResult = '';
+        document.getElementById('linkInput').addEventListener('keydown',function(e){if(e.key==='Enter')bypassLink()});
+        
+        async function bypassLink(){
+            const input=document.getElementById('linkInput'),btn=document.getElementById('btnBypass'),
+                  spinner=document.getElementById('spinner'),resultBox=document.getElementById('resultBox'),
+                  copyHint=document.getElementById('copyHint'),url=input.value.trim();
+            if(!url){showResult('⚠ Vui lòng nhập link Link4m!',false);input.focus();return}
+            if(!url.includes('link4m.com')&&!url.includes('link4m.')){showResult('❌ Đây không phải link Link4m!',false);return}
+            btn.classList.add('loading');btn.textContent='ĐANG XỬ LÝ...';spinner.classList.add('active');
+            resultBox.className='result-box';resultBox.innerHTML='';copyHint.classList.remove('visible');
+            let finalLink=null;
+            try{
+                const res=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({url:url})});
+                if(res.ok){const data=await res.json();if(data.destination)finalLink=data.destination;else if(data.url)finalLink=data.url}
+            }catch(e){}
+            if(!finalLink){try{
+                const res=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(url));
+                const html=await res.text();
+                const patterns=[/window\.location\s*=\s*["']([^"']+)["']/i,/location\.href\s*=\s*["']([^"']+)["']/i,/location\.replace\(["']([^"']+)["']\)/i,/redirect(?:Url|URL|url)\s*[:=]\s*["']([^"']+)["']/i,/data-url\s*=\s*["']([^"']+)["']/i,/data-link\s*=\s*["']([^"']+)["']/i];
+                for(const p of patterns){const m=html.match(p);if(m&&m[1]&&m[1].startsWith('http')&&!m[1].includes('link4m')){finalLink=m[1];break}}
+                if(!finalLink){const b64=html.match(/atob\(["']([^"']+)["']\)/);if(b64){try{const d=atob(b64[1]);if(d.startsWith('http'))finalLink=d}catch(e){}}}
+                if(!finalLink){const urls=html.match(/https?:\/\/[^\s"'<>\[\]]+/gi);if(urls){const c=urls.filter(u=>!u.includes('link4m')&&!u.includes('google')&&!u.includes('cdn')&&!u.includes('.js')&&!u.includes('.css')&&!u.includes('.png')&&u.length>25);if(c.length>0)finalLink=c.reduce((a,b)=>a.length>b.length?a:b)}}
+            }catch(e){}}
+            if(!finalLink){try{
+                const res=await fetch('https://corsproxy.io/?'+encodeURIComponent(url));
+                const html=await res.text();const urls=html.match(/https?:\/\/[^\s"'<>\[\]]+/gi);
+                if(urls){const c=urls.filter(u=>!u.includes('link4m')&&!u.includes('corsproxy')&&u.length>25);if(c.length>0)finalLink=c[c.length-1]}
+            }catch(e){}}
+            btn.classList.remove('loading');btn.textContent='⚡ BYPASS NGAY';spinner.classList.remove('active');
+            if(finalLink){currentResult=finalLink;showResult(finalLink,true)}else{currentResult='';showResult('❌ Không bypass được link này!',false)}
+        }
+        
+        function showResult(msg,success){
+            const rb=document.getElementById('resultBox'),ch=document.getElementById('copyHint');
+            rb.className='result-box';if(success){rb.classList.add('success');rb.innerHTML='<span class="result-text">'+escapeHtml(msg)+'</span>';ch.classList.add('visible')}
+            else{rb.classList.add('error');rb.innerHTML='<span style="color:#ff4444;font-size:14px">'+escapeHtml(msg)+'</span>';ch.classList.remove('visible')}
+        }
+        
+        function copyResult(){if(currentResult&&currentResult.startsWith('http')){navigator.clipboard.writeText(currentResult).then(showToast).catch(()=>{const ta=document.createElement('textarea');ta.value=currentResult;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast()})}}
+        function showToast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500)}
+        function clearInput(){document.getElementById('linkInput').value='';document.getElementById('resultBox').className='result-box';document.getElementById('resultBox').innerHTML='<span class="result-placeholder">Link gốc hoặc key sẽ hiện ở đây...</span>';document.getElementById('copyHint').classList.remove('visible');currentResult='';document.getElementById('linkInput').focus()}
+        function escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML}
+    </script>
+</body>
+              </html>
