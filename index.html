@@ -3,207 +3,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Link4m Bypass</title>
+<title>Link4m Bypass - Devils Will Rise</title>
 <style>
-body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;margin:0;padding:15px}
-.box{width:100%;max-width:450px;text-align:center}
-h1{color:#ff003c;font-family:monospace;font-size:24px;margin-bottom:5px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;padding:15px}
+.wrap{width:100%;max-width:450px;text-align:center}
+h1{color:#ff003c;font-family:monospace;font-size:26px;margin-bottom:5px;text-shadow:0 0 20px #ff003c;letter-spacing:3px}
 .sub{color:#666;font-size:10px;margin-bottom:15px}
 .sub span{color:#ff003c}
-.card{background:#111;border:1px solid #222;border-radius:16px;padding:20px}
+.card{background:#111;border:1px solid #222;border-radius:16px;padding:18px}
 input{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:14px;outline:none;margin-bottom:10px;text-align:center}
 input:focus{border-color:#ff003c}
-.btn{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:2px;margin-bottom:8px}
-.btn:active{transform:scale(0.97)}
-.btn:disabled{opacity:0.5}
-.result{margin-top:12px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:15px;min-height:40px;word-break:break-all;font-family:monospace;font-size:13px;line-height:1.5;cursor:pointer}
-.result.ok{border-color:#00ff41;color:#00ff41}
-.result.err{border-color:#ff003c;color:#ff4444}
-.result.info{border-color:#ffcc00;color:#ffcc00}
-.badge{display:inline-block;margin-top:4px;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:bold}
-.badge-ok{background:#002200;color:#00ff41;border:1px solid #00ff41}
-.badge-no{background:#220000;color:#ff4444;border:1px solid #ff4444}
-.badge-web{background:#221100;color:#ff6600;border:1px solid #ff6600}
+button{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:2px}
+button:active{transform:scale(0.97)}
+button:disabled{opacity:0.5}
+.res{margin-top:12px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:15px;min-height:40px;word-break:break-all;font-family:monospace;font-size:13px;line-height:1.5;cursor:pointer}
+.res.good{border-color:#00ff41;color:#00ff41}
+.res.bad{border-color:#ff003c;color:#ff4444}
+.res.wait{border-color:#ffcc00;color:#ffcc00}
 .placeholder{color:#333;font-size:12px}
-.spin{width:20px;height:20px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.7s linear infinite;margin:8px auto;display:none}
-.spin.on{display:block}
+.load{width:20px;height:20px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.7s linear infinite;margin:8px auto;display:none}
+.load.show{display:block}
 @keyframes spin{to{transform:rotate(360deg)}}
 .foot{margin-top:12px;color:#444;font-size:10px}
 .foot span{color:#ff003c;cursor:pointer}
 .toast{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:8px 18px;border-radius:20px;font-weight:bold;font-size:12px;z-index:999;display:none}
-.toast.on{display:block}
-.logbox{margin-top:8px;background:#0a0a0a;border-radius:8px;padding:8px;max-height:100px;overflow-y:auto;text-align:left;display:none;font-family:monospace;font-size:9px}
-.logbox.on{display:block}
-.log{color:#555;padding:1px 0}
-.log.g{color:#00ff41}
-.log.r{color:#ff4444}
-.log.y{color:#ffcc00}
-.btn-row{display:flex;gap:8px}
-.btn-row .btn-sm{width:44px;flex:0;background:#222;color:#ff003c;border:1px solid #ff003c;font-size:16px;display:none}
-.btn-row .btn-sm.on{display:block}
+.toast.show{display:block}
 </style>
 </head>
 <body>
 <div class="toast" id="toast">Copied!</div>
-<div class="box">
+<div class="wrap">
 <h1>LINK4M BYPASS</h1>
 <div class="sub">Owner <span>@DP</span> | <span>@SGCodexs</span></div>
 <div class="card">
-<input type="text" id="url" placeholder="Paste link Link4m here..." autocomplete="off" autofocus>
-<div class="btn-row">
-<button class="btn" id="btnGo" onclick="go()">BYPASS</button>
-<button class="btn btn-sm" id="btnOpen" onclick="openLink()">↗</button>
+<input type="text" id="url" placeholder="Paste link Link4m..." autofocus>
+<button id="btn" onclick="bypass()">BYPASS</button>
+<div class="load" id="load"></div>
+<div class="res" id="res" onclick="copyRes()">
+<span class="placeholder">Click BYPASS...</span>
 </div>
-<div class="spin" id="spin"></div>
-<div class="result" id="res" onclick="copyLink()">
-<span class="placeholder">Result here...</span>
-</div>
-<div class="logbox" id="logs"></div>
 </div>
 <div class="foot">
-<span onclick="wipe()">Clear</span> | 
-<span onclick="showLog()">Log</span> | 
-<span>@SGCodexs</span>
+<span onclick="clearAll()">Clear</span> | <span>@SGCodexs</span>
 </div>
 </div>
 
 <script>
-var finalLink='';
-var logOn=false;
+var F='';
+function toast(){var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1500)}
 
-function log(m,c){
-var lb=document.getElementById('logs');
-lb.classList.add('on');
-lb.innerHTML+='<div class="log '+(c||'')+'">'+m+'</div>';
-lb.scrollTop=lb.scrollHeight;
+async function bypass(){
+var u=document.getElementById('url').value.trim();
+var b=document.getElementById('btn'),l=document.getElementById('load'),r=document.getElementById('res');
+if(!u)return;
+b.disabled=true;b.textContent='WAIT...';l.classList.add('show');
+r.className='res wait';r.innerHTML='Processing...';
+F='';
+
+// ===== PHƯƠNG PHÁP 1: Fetch trực tiếp qua proxy =====
+try{
+var p1='https://api.allorigins.win/raw?url='+encodeURIComponent(u);
+var x1=await fetch(p1);
+if(x1.ok){
+var h=await x1.text();
+// Tìm tất cả URL trong HTML
+var urls=h.match(/https?:\/\/[^\s"'<>\[\]]{15,}/gi)||[];
+var good=[];
+for(var i=0;i<urls.length;i++){
+var v=urls[i].replace(/\\/g,'').trim();
+if(v.indexOf('link4m')==-1&&v.indexOf('cloudflare')==-1&&v.indexOf('.js')==-1&&v.indexOf('.css')==-1&&v.indexOf('.png')==-1&&v.indexOf('.jpg')==-1&&v.indexOf('google.com')==-1&&v.indexOf('facebook')==-1&&v.indexOf('googletagmanager')==-1&&v.indexOf('recaptcha')==-1&&v.indexOf('favicon')==-1&&v.indexOf('yoads')==-1&&v.indexOf('analytics')==-1&&v.length>20)good.push(v);
 }
-
-function showLog(){logOn=!logOn;var lb=document.getElementById('logs');if(logOn)lb.classList.add('on');else lb.classList.remove('on')}
-
-function isLink4m(u){return u.indexOf('link4m.')!==-1}
-
-async function go(){
-var inp=document.getElementById('url');var url=inp.value.trim();
-var btn=document.getElementById('btnGo');var spin=document.getElementById('spin');
-var res=document.getElementById('res');var btnO=document.getElementById('btnOpen');
-var logs=document.getElementById('logs');
-logs.innerHTML='';res.className='result';res.innerHTML='<span class="placeholder">Processing...</span>';
-btnO.classList.remove('on');finalLink='';
-
-if(!url){res.className='result err';res.innerHTML='Enter a link!';return}
-if(!isLink4m(url)){res.className='result err';res.innerHTML='Not a Link4m link!';return}
-
-log('Start: '+url.substring(0,50),'y');
-btn.disabled=true;btn.textContent='PROCESSING...';spin.classList.add('on');
-
-var dest=null;
-
-// Method 1: bypass.pm
-log('M1: bypass.pm','y');
-try{
-var r1=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
-if(r1.ok){var d=await r1.json();if(d.destination&&!isLink4m(d.destination)){dest=d.destination;log('OK!','g')}else if(d.url&&!isLink4m(d.url)){dest=d.url;log('OK!','g')}}
-}catch(e){log('Failed','r')}
-
-// Method 2: Proxy
-if(!dest){
-log('M2: Proxy','y');
-var px=['https://api.allorigins.win/raw?url=','https://corsproxy.io/?'];
-for(var i=0;i<px.length;i++){
-if(dest)break;
-try{
-var pu=px[i]+encodeURIComponent(url);
-log(' Try #'+(i+1)+'...');
-var r2=await fetch(pu,{headers:{'User-Agent':'Mozilla/5.0'}});
-if(r2.ok){
-var h=await r2.text();
-log(' OK '+h.length+' chars','g');
-if(h.indexOf('cloudflare')!==-1||h.indexOf('turnstile')!==-1){log(' Cloudflare','r');continue}
-
-// Find all URLs
-var urls=h.match(/https?:\/\/[^\s"'<>\[\]]{10,}/gi)||[];
-var clean=[];
-for(var j=0;j<urls.length;j++){
-var u=urls[j].replace(/\\/g,'').trim();
-if(u.indexOf('link4m')===-1&&u.indexOf('cloudflare')===-1&&u.indexOf('.js')===-1&&u.indexOf('.css')===-1&&u.indexOf('.png')===-1&&u.indexOf('.jpg')===-1&&u.indexOf('google')===-1&&u.indexOf('facebook')===-1&&u.indexOf('googletagmanager')===-1&&u.indexOf('recaptcha')===-1&&u.indexOf('favicon')===-1&&u.indexOf('analytics')===-1&&u.indexOf('yoads')===-1&&u.length>25)clean.push(u);
+// Chọn link dài nhất
+if(good.length>0){
+var best=good[0];
+for(var j=1;j<good.length;j++){if(good[j].length>best.length)best=good[j]}
+F=best;
 }
-
-if(clean.length>0){
-// Try follow each
-for(var k=0;k<Math.min(clean.length,5);k++){
-try{
-log(' Follow: '+clean[k].substring(0,50));
-var r3=await fetch(clean[k],{method:'GET',redirect:'follow',headers:{'User-Agent':'Mozilla/5.0'}});
-if(r3.url!==clean[k]&&!isLink4m(r3.url)){dest=r3.url;log(' OK!','g');break}
+}
 }catch(e){}
-}
-}
-}
-}catch(e){log(' Failed','r')}
-}
-}
 
-// Method 3: Generate /go/ links
-if(!dest){
-log('M3: Generate redirects','y');
-var domain=url.replace('https://','').replace('http://','').split('/')[0];
-var key=url.split('/').pop();
-var paths=['/go/','/direct/','/get/','/link/','/out/','/download/','/dl/'];
+// ===== PHƯƠNG PHÁP 2: Tự tạo /go/ link =====
+if(!F){
+try{
+var d=u.replace('https://','').replace('http://','').split('/')[0];
+var k=u.split('/').pop();
+var paths=['/go/','/direct/','/get/'];
 for(var p=0;p<paths.length;p++){
-if(dest)break;
-try{
-var gu='https://'+domain+paths[p]+key;
-log(' Try: '+gu.substring(0,50));
-var r4=await fetch(gu,{method:'GET',redirect:'follow',headers:{'User-Agent':'Mozilla/5.0'}});
-if(r4.url!==gu&&!isLink4m(r4.url)){dest=r4.url;log(' OK!','g');break}
+var gu='https://'+d+paths[p]+k;
+var x2=await fetch(gu,{method:'GET',redirect:'follow'});
+if(x2.url!==gu&&x2.url.indexOf('link4m')===-1){F=x2.url;break}
+}
 }catch(e){}
 }
+
+// ===== PHƯƠNG PHÁP 3: Dùng bypass.pm =====
+if(!F){
+try{
+var x3=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u})});
+if(x3.ok){var d3=await x3.json();if(d3.destination)F=d3.destination;else if(d3.url)F=d3.url}
+}catch(e){}
 }
 
-spin.classList.remove('on');
-btn.disabled=false;btn.textContent='BYPASS';
+l.classList.remove('show');
+b.disabled=false;b.textContent='BYPASS';
 
-if(dest){
-dest=dest.replace(/\\/g,'').trim();
-if(dest.indexOf('http')!==0)dest='https://'+dest;
-finalLink=dest;
-
-// Check
-log('Check link...','y');
-var alive=false,isFile=false,fn='',fs='',code=0;
-try{
-var ck=await fetch(dest,{method:'HEAD',headers:{'User-Agent':'Mozilla/5.0'}});
-code=ck.status;
-var ct=ck.headers.get('content-type')||'';
-var cl=ck.headers.get('content-length')||'';
-var disp=ck.headers.get('content-disposition')||'';
-fs=cl;
-if(code===200||code===302){alive=true}
-if(ct.indexOf('zip')!==-1||ct.indexOf('rar')!==-1||ct.indexOf('octet-stream')!==-1||ct.indexOf('exe')!==-1||ct.indexOf('apk')!==-1||ct.indexOf('pdf')!==-1||ct.indexOf('mp4')!==-1){isFile=true;fn=dest.split('/').pop().split('?')[0];if(fn.indexOf('.')===-1)fn='file'}
-else if(disp.indexOf('attachment')!==-1){isFile=true;var fm=disp.match(/filename[^;=\n]*=["']?([^"';\n]+)["']?/i);if(fm)fn=fm[1]}
-}catch(e){}
-
-var sz='';
-if(fs){var n=parseInt(fs);if(n<1024)sz=n+' B';else if(n<1048576)sz=(n/1024).toFixed(1)+' KB';else if(n<1073741824)sz=(n/1048576).toFixed(1)+' MB';else sz=(n/1073741824).toFixed(2)+' GB'}
-
-res.className='result ok';
-var txt='<b>SUCCESS!</b>\n\n'+dest+'\n\n';
-if(alive&&isFile){txt+='<span class="badge badge-ok">FILE: '+fn+' ('+sz+')</span>';log('FILE!','g')}
-else if(alive){txt+='<span class="badge badge-web">WEB PAGE</span>';log('Web','y')}
-else{txt+='<span class="badge badge-no">DEAD LINK (404)</span>';res.className='result err';log('Dead','r')}
-txt+='\n\n<span style="color:#888;font-size:10px">Click to copy</span>';
-res.innerHTML=txt;
-btnO.classList.add('on');
+if(F){
+r.className='res good';
+r.innerHTML='<b>SUCCESS!</b>\n\n'+F+'\n\n<span style="color:#888;font-size:10px">Click to copy</span>';
+toast();
 }else{
-res.className='result err';
-res.innerHTML='<b>FAILED</b>\n\nCloudflare blocked or link dead.\n\nTry opening in browser and copy destination URL manually.';
-log('FAILED','r');
+r.className='res bad';
+r.innerHTML='<b>FAILED</b>\n\nCannot bypass. Try opening in browser.';
 }
 }
 
-function copyLink(){if(finalLink){navigator.clipboard.writeText(finalLink).then(function(){var t=document.getElementById('toast');t.classList.add('on');setTimeout(function(){t.classList.remove('on')},1500)}).catch(function(){var ta=document.createElement('textarea');ta.value=finalLink;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);var t=document.getElementById('toast');t.classList.add('on');setTimeout(function(){t.classList.remove('on')},1500)})}}
-function openLink(){if(finalLink)window.open(finalLink,'_blank')}
-function wipe(){document.getElementById('url').value='';document.getElementById('res').className='result';document.getElementById('res').innerHTML='<span class="placeholder">Result here...</span>';document.getElementById('logs').innerHTML='';document.getElementById('btnOpen').classList.remove('on');document.getElementById('spin').classList.remove('on');var b=document.getElementById('btnGo');b.disabled=false;b.textContent='BYPASS';finalLink='';document.getElementById('url').focus()}
+function copyRes(){if(F){navigator.clipboard.writeText(F).then(toast).catch(function(){var t=document.createElement('textarea');t.value=F;t.style.position='fixed';t.style.left='-9999px';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast()})}}
+function clearAll(){document.getElementById('url').value='';document.getElementById('res').className='res';document.getElementById('res').innerHTML='<span class="placeholder">Click BYPASS...</span>';F='';document.getElementById('url').focus()}
 </script>
 </body>
 </html>
