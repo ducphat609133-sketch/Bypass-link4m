@@ -74,27 +74,49 @@ function log(msg,type){var lb=document.getElementById('logBox');lb.classList.add
 function toggleLog(){logVisible=!logVisible;var lb=document.getElementById('logBox');if(logVisible)lb.classList.add('show');else lb.classList.remove('show')}
 function showLoading(s){var sp=document.getElementById('spinner');var b=document.getElementById('btnBypass');if(s){sp.classList.add('show');b.classList.add('loading');b.textContent='ĐANG XỬ LÝ...'}else{sp.classList.remove('show');b.classList.remove('loading');b.textContent='⚡ BYPASS'}}
 
-// ===== KIỂM TRA CÒN LÀ LINK4M KHÔNG =====
-function isShortLink(u){return u.indexOf('link4m.')!==-1||u.indexOf('ouo.io')!==-1||u.indexOf('ouo.press')!==-1||u.indexOf('shrinkme')!==-1||u.indexOf('shortconnect')!==-1||u.indexOf('work.ink')!==-1||u.indexOf('adf.ly')!==-1||u.indexOf('bit.ly')!==-1||u.indexOf('tinyurl')!==-1||u.indexOf('shorturl')!==-1||u.indexOf('shorte.st')!==-1}
+function isShort(u){return u.indexOf('link4m.')!==-1||u.indexOf('ouo.io')!==-1||u.indexOf('shrinkme')!==-1||u.indexOf('work.ink')!==-1||u.indexOf('adf.ly')!==-1||u.indexOf('bit.ly')!==-1||u.indexOf('tinyurl')!==-1}
 function getDomain(u){return u.replace('https://','').replace('http://','').split('/')[0]}
 
 function generateRedirects(url){
 var links=[];var d=getDomain(url);var parts=url.replace('https://','').replace('http://','').split('/');var key=parts[1]||'';if(!key)return links;
 var paths=['/go/','/get/','/download/','/link/','/out/','/redirect/','/dl/','/d/','/file/','/direct/'];
-for(var i=0;i<paths.length;i++){links.push('https://'+d+paths[i]+key);links.push('http://'+d+paths[i]+key)}
+for(var i=0;i<paths.length;i++){links.push('https://'+d+paths[i]+key)}
 return links;
 }
 
-async function follow(u,depth){
-if(depth>8)return u;
-log('  🔄 ['+depth+'] '+u.substring(0,60),'info');
+// ===== FOLLOW DÙNG GET (QUAN TRỌNG) =====
+async function follow(url,depth){
+if(depth>5)return url;
+log('  🔄 ['+depth+'] '+url.substring(0,70),'info');
 try{
-var ctrl=new AbortController();var to=setTimeout(function(){ctrl.abort()},5000);
-var res=await fetch(u,{method:'HEAD',redirect:'follow',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}});
-clearTimeout(to);
-if(res.redirected&&res.url!==u){log('  ➡ '+res.url.substring(0,60),'good');if(isShortLink(res.url))return await follow(res.url,depth+1);return res.url}
-return u;
-}catch(e){log('  ❌ '+e.message.substring(0,30),'bad');return u}
+// Dùng GET thay vì HEAD - Link4m chặn HEAD!
+var res=await fetch(url,{
+method:'GET',
+redirect:'follow',
+headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36','Accept':'text/html,application/xhtml+xml','Accept-Language':'vi-VN,vi;q=0.9'}
+});
+// Nếu URL thay đổi sau redirect
+if(res.url!==url){
+log('  ➡ '+res.url.substring(0,70),'good');
+if(isShort(res.url))return await follow(res.url,depth+1);
+return res.url;
+}
+// Nếu không redirect, thử parse HTML tìm meta refresh
+var html=await res.text();
+var meta=html.match(/<meta[^>]*http-equiv\s*=\s*["']refresh["'][^>]*content\s*=\s*["']\d+\s*;\s*url\s*=\s*([^"'\s>]+)/i);
+if(meta&&meta[1]){
+var next=meta[1];
+if(next.indexOf('http')!==0){var base=getDomain(url);next='https://'+base+'/'+next.replace(/^\//,'')}
+log('  🔍 Meta refresh: '+next.substring(0,70),'info');
+if(isShort(next))return await follow(next,depth+1);
+return next;
+}
+// Tìm window.location trong HTML
+var loc=html.match(/window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']{5,})["']/i);
+if(loc&&loc[1]){var next2=loc[1];log('  🔍 JS redirect: '+next2.substring(0,70),'info');if(isShort(next2))return await follow(next2,depth+1);return next2}
+
+return url;
+}catch(e){log('  ❌ '+e.message.substring(0,40),'bad');return url}
 }
 
 function extractLinks(html){
@@ -109,12 +131,10 @@ var cl=[];for(var i=0;i<found.length;i++){var u=found[i];if(typeof u!=='string')
 var seen={};var uniq=[];for(var i=0;i<cl.length;i++){if(!seen[cl[i]]){seen[cl[i]]=true;uniq.push(cl[i])}}
 log('📊 '+uniq.length+' link','info');
 for(var i=0;i<Math.min(uniq.length,10);i++)log('  ['+i+'] '+uniq[i].substring(0,80),'link');
-// Tìm redirect nội bộ
-for(var i=0;i<uniq.length;i++){if(uniq[i].indexOf('/go/')!==-1||uniq[i].indexOf('/redirect/')!==-1||uniq[i].indexOf('/link/')!==-1||uniq[i].indexOf('/out/')!==-1||uniq[i].indexOf('/get/')!==-1||uniq[i].indexOf('/download/')!==-1||uniq[i].indexOf('/dl/')!==-1){log('🎯 Redirect nội bộ: '+uniq[i].substring(0,60),'good');return uniq[i]}}
-// Lọc
-var bl=['cloudflare','google.com/recaptcha','googletagmanager','facebook.net','.js','.css','.png','.jpg','.jpeg','.svg','.ico','.gif','.woff','.ttf','analytics','gtag','ajax','yoads','favicon','static.'];
+for(var i=0;i<uniq.length;i++){if(uniq[i].indexOf('/go/')!==-1||uniq[i].indexOf('/redirect/')!==-1||uniq[i].indexOf('/link/')!==-1||uniq[i].indexOf('/out/')!==-1||uniq[i].indexOf('/get/')!==-1||uniq[i].indexOf('/download/')!==-1||uniq[i].indexOf('/dl/')!==-1||uniq[i].indexOf('/direct/')!==-1){log('🎯 Redirect: '+uniq[i].substring(0,60),'good');return uniq[i]}}
+var bl=['cloudflare','recaptcha','googletagmanager','facebook.net','.js','.css','.png','.jpg','.jpeg','.svg','.ico','.gif','.woff','.ttf','analytics','gtag','ajax','yoads','favicon','static.'];
 var fl=[];for(var i=0;i<uniq.length;i++){var u=uniq[i];var l=u.toLowerCase();var bad=false;for(var j=0;j<bl.length;j++){if(l.indexOf(bl[j])!==-1){bad=true;break}}if(!bad)fl.push(u)}
-log('🔍 Sau lọc: '+fl.length,'info');for(var i=0;i<fl.length;i++)log('  ✅ '+fl[i].substring(0,80),'good');
+log('🔍 Sau lọc: '+fl.length,'info');
 if(fl.length===0)return null;
 var prio=['drive.google.com','docs.google.com','mega.nz','mediafire.com','dropbox.com','pastebin.com','github.com','download','file','get','zip','rar','7z','exe','apk','pdf','mp4','mp3'];
 for(var i=0;i<prio.length;i++){for(var j=0;j<fl.length;j++){if(fl[j].toLowerCase().indexOf(prio[i])!==-1){log('⭐ '+prio[i],'good');return fl[j]}}}
@@ -125,8 +145,8 @@ async function checkLink(u){
 log('🔬 Kiểm tra...','info');
 var r={alive:false,isFile:false,fn:'',fs:'',code:0};
 try{
-var ctrl=new AbortController();var to=setTimeout(function(){ctrl.abort()},6000);
-var res=await fetch(u,{method:'HEAD',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0'}});
+var ctrl=new AbortController();var to=setTimeout(function(){ctrl.abort()},8000);
+var res=await fetch(u,{method:'GET',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0'}});
 clearTimeout(to);r.code=res.status;var ct=res.headers.get('content-type')||'';var cl=res.headers.get('content-length')||'';var disp=res.headers.get('content-disposition')||'';r.fs=cl;
 if(res.status===200||res.status===302||res.status===301){r.alive=true;log('✅ HTTP '+res.status,'good')}else if(res.status===404)log('❌ 404','bad');else log('⚠ '+res.status,'warn');
 var ctl=ct.toLowerCase();
@@ -148,45 +168,38 @@ var R=null;
 
 // M1: bypass.pm
 log('📡 M1: Bypass.pm','info');
-try{var r1=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});if(r1.ok){var d=await r1.json();if(d.destination&&!isShortLink(d.destination)){R=d.destination;log('✅ OK: '+R.substring(0,50),'good')}else if(d.url&&!isShortLink(d.url)){R=d.url;log('✅ OK: '+R.substring(0,50),'good')}else log('⚠ Vẫn link rút gọn, bỏ qua','warn')}}catch(e){log('❌ '+e.message,'bad')}
+try{var r1=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});if(r1.ok){var d=await r1.json();if(d.destination&&!isShort(d.destination)){R=d.destination;log('✅ OK','good')}else if(d.url&&!isShort(d.url)){R=d.url;log('✅ OK','good')}}}catch(e){log('❌ '+e.message,'bad')}
 
-// M2: Jina
-if(!R){log('📡 M2: Jina AI','info');
-try{var r2=await fetch('https://r.jina.ai/https://'+url.replace('https://','').replace('http://',''),{headers:{'Accept':'text/markdown'}});
-if(r2.ok){var t=await r2.text();log('✅ '+t.length+' ký tự','good');
-if(t.indexOf('turnstile')!==-1||t.indexOf('cloudflare')!==-1)log('⚠ Cloudflare','warn');
-else{var ex=extractLinks(t);if(ex&&!isShortLink(ex)){R=ex;log('🎯 OK: '+R.substring(0,50),'good')}else if(ex)log('⚠ Vẫn link rút gọn, bỏ qua','warn')}}
-}catch(e){log('❌ '+e.message,'bad')}}
-
-// M3: Proxy
-if(!R){log('📡 M3: Proxy','info');
+// M2: Proxy fetch (lấy HTML trước để tìm link /go/)
+if(!R){log('📡 M2: Proxy lấy HTML...','info');
 var pl=['https://api.allorigins.win/raw?url=','https://corsproxy.io/?','https://api.codetabs.com/v1/proxy?quest='];
 for(var p=0;p<pl.length;p++){if(R)break;
 try{var pu=pl[p]+encodeURIComponent(url);log('  #'+(p+1)+'...');
 var r3=await fetch(pu,{headers:{'User-Agent':'Mozilla/5.0'}});
 if(r3.ok){var h=await r3.text();log('  ✅ '+h.length+' ký tự','good');
 if(h.indexOf('challenges.cloudflare.com')!==-1||h.indexOf('turnstile')!==-1){log('  ⚠ CF','warn');continue}
-var ex=extractLinks(h);if(ex&&!isShortLink(ex)){R=ex;log('  🎯 OK: '+R.substring(0,50),'good');break}else if(ex)log('  ⚠ Vẫn link rút gọn','warn')}
+var ex=extractLinks(h);if(ex){log('  🎯 Tìm thấy: '+ex.substring(0,60),'good');
+if(!isShort(ex)){R=ex;break} // Nếu đã là link đích thì lấy luôn
+// Nếu là link /go/ thì follow
+log('  🔄 Đang follow...','info');
+var fw=await follow(ex,0);
+if(fw!==ex&&!isShort(fw)){R=fw;log('  🎯 Follow OK!','good');break}
+}}
 }catch(e){log('  ❌ '+e.message,'bad')}}}
 
-// M4: Follow redirects (LUÔN CHẠY NẾU CHƯA CÓ KẾT QUẢ HOẶC KẾT QUẢ VẪN LÀ LINK RÚT GỌN)
-if(!R||isShortLink(R)){
-log('📡 M4: Follow redirects...','info');
+// M3: Follow tất cả redirect có thể
+if(!R){log('📡 M3: Follow tất cả redirect...','info');
 var redirs=generateRedirects(url);
-// Thêm link từ M2/M3 nếu có
-if(R)redirs.unshift(R);
-log('  🔗 '+redirs.length+' link để follow','info');
-for(var i=0;i<redirs.length;i++){
-var test=R;
-try{log('  Thử: '+redirs[i].substring(0,60));
+log('  🔗 '+redirs.length+' link','info');
+for(var i=0;i<redirs.length;i++){if(R)break;
+try{log('  #'+(i+1)+': '+redirs[i].substring(0,50));
 var fw=await follow(redirs[i],0);
-if(fw!==redirs[i]&&!isShortLink(fw)){R=fw;log('  🎯 Follow OK!','good');break}else log('  ⚠ Vẫn link rút gọn','warn');
-}catch(e){log('  ❌ '+e.message,'bad')}
-}
+if(!isShort(fw)&&fw!==redirs[i]){R=fw;log('  🎯 OK!','good');break}
+}catch(e){log('  ❌ '+e.message,'bad')}}
 }
 
 showLoading(false);
-if(R&&!isShortLink(R)){
+if(R&&!isShort(R)){
 R=R.replace(/\\/g,'').replace(/&amp;/g,'&').trim();if(R.indexOf('http')!==0)R='https://'+R.replace(/^\/+/,'');finalLink=R;
 var ck=await checkLink(R);var bd='';
 if(ck.alive&&ck.isFile){bd='<span class="s-badge s-ok">✅ FILE: '+ck.fn+' ('+fmt(ck.fs)+')</span>';showRB(R,'success',bd);log('🏆 FILE!','good');bo.style.display='block'}
@@ -194,8 +207,7 @@ else if(ck.alive&&!ck.isFile){bd='<span class="s-badge s-web">⚠ TRANG WEB</spa
 else if(!ck.alive&&ck.code===404){bd='<span class="s-badge s-dead">❌ 404 - HÃY THỬ FILE KHÁC</span>';showRB(R,'error',bd);log('💀 404','bad')}
 else{bd='<span class="s-badge s-dead">❌ KHÔNG TRUY CẬP ĐƯỢC</span>';showRB(R,'error',bd);log('💀 Lỗi','bad')}
 }else{
-showR('❌ KHÔNG BYPASS ĐƯỢC! Link bị Cloudflare chặn.', 'error');
-log('💀 THẤT BẠI - Tất cả method đều không ra được link đích','bad');
+showR('❌ KHÔNG BYPASS ĐƯỢC!','error');log('💀 THẤT BẠI','bad');
 }
 }
 function showRB(l,t,b){var rb=document.getElementById('resultBox');rb.className='result-box';if(t==='success')rb.classList.add('success');else if(t==='warning')rb.classList.add('warning');else rb.classList.add('error');rb.innerHTML='<div>'+l+'</div>'+b}
