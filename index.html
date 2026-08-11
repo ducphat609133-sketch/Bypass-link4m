@@ -3,34 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Bypass Tool - Devils Will Rise</title>
+<title>Bypass Tool V2 - Devils Will Rise</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',sans-serif}
 .wrapper{width:90%;max-width:500px;text-align:center;padding:15px}
-.logo{font-family:'Courier New',monospace;font-size:28px;font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c;letter-spacing:3px;margin-bottom:3px}
-.subtitle{color:#666;font-size:10px;margin-bottom:18px}
+.logo{font-family:'Courier New',monospace;font-size:26px;font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c;letter-spacing:3px;margin-bottom:3px}
+.subtitle{color:#666;font-size:10px;margin-bottom:15px}
 .subtitle span{color:#ff003c}
 .card{background:#111;border:1px solid #222;border-radius:16px;padding:20px}
-input{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:14px;outline:none;margin-bottom:12px;text-align:center}
+input{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:14px;outline:none;margin-bottom:10px;text-align:center}
 input:focus{border-color:#ff003c}
-button{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:2px;margin-bottom:6px}
+button{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:2px}
 button:active{transform:scale(0.97)}
 button.loading{opacity:0.6;pointer-events:none}
 .result-box{margin-top:14px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:16px;min-height:50px;word-break:break-all;cursor:pointer;font-family:'Courier New',monospace;font-size:13px}
 .result-box.success{border-color:#00ff41;color:#00ff41}
 .result-box.error{border-color:#ff003c;color:#ff4444}
-.result-box.info{border-color:#ffcc00;color:#ffcc00}
 .placeholder{color:#333;font-size:12px}
-.log-box{margin-top:10px;background:#0a0a0a;border-radius:8px;padding:10px;max-height:150px;overflow-y:auto;text-align:left;display:none}
+.hint{color:#666;font-size:10px;margin-top:8px}
+.hint span{color:#ffcc00;cursor:pointer}
+.hint span:hover{text-decoration:underline}
+.iframe-container{width:100%;height:400px;margin-top:10px;border:2px solid #333;border-radius:12px;overflow:hidden;display:none}
+.iframe-container.show{display:block}
+.iframe-container iframe{width:100%;height:100%;border:none}
+.spinner{width:24px;height:24px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.8s linear infinite;margin:10px auto;display:none}
+.spinner.show{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.log-box{margin-top:10px;background:#0a0a0a;border-radius:8px;padding:10px;max-height:120px;overflow-y:auto;text-align:left;display:none}
 .log-box.show{display:block}
 .log-line{color:#555;font-size:10px;font-family:'Courier New',monospace;padding:2px 0}
 .log-line.good{color:#00ff41}
 .log-line.bad{color:#ff4444}
 .log-line.info{color:#ffcc00}
-.spinner{width:24px;height:24px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.8s linear infinite;margin:10px auto;display:none}
-.spinner.show{display:block}
-@keyframes spin{to{transform:rotate(360deg)}}
 .footer{margin-top:14px;color:#444;font-size:10px}
 .footer span{color:#ff003c;cursor:pointer}
 .footer span:hover{color:#fff}
@@ -38,7 +43,7 @@ button.loading{opacity:0.6;pointer-events:none}
 .toast.show{display:block}
 .btn-row{display:flex;gap:8px}
 .btn-row button{flex:1}
-.btn-row .btn-open{flex:0;width:50px;background:#222;color:#ff003c;border:1px solid #ff003c;font-size:18px}
+.btn-small{width:50px;flex:0!important;background:#222;color:#ff003c;border:1px solid #ff003c;font-size:18px}
 </style>
 </head>
 <body>
@@ -47,14 +52,18 @@ button.loading{opacity:0.6;pointer-events:none}
 <div class="logo">DEVILS WILL RISE</div>
 <div class="subtitle">Owner <span>@DP</span> | <span>@SGCodexs</span></div>
 <div class="card">
-<input type="text" id="linkInput" placeholder="Dán link Link4m / OUO / AdFly... vào đây" autocomplete="off" autofocus>
+<input type="text" id="linkInput" placeholder="Dán link Link4m vào đây..." autocomplete="off" autofocus>
 <div class="btn-row">
-<button id="btnBypass" onclick="bypass()">⚡ BYPASS</button>
-<button class="btn-open" id="btnOpen" onclick="openLink()" style="display:none">↗</button>
+<button id="btnBypass" onclick="openInFrame()">🔓 MỞ & BYPASS</button>
+<button class="btn-small" id="btnCopy" onclick="copyLink()" style="display:none">📋</button>
 </div>
 <div class="spinner" id="spinner"></div>
 <div class="result-box" id="resultBox" onclick="copyLink()">
-<span class="placeholder">Kết quả sẽ hiện ở đây...</span>
+<span class="placeholder">Link gốc sẽ hiện ở đây...</span>
+</div>
+<div class="hint">👆 Click link để copy | <span onclick="toggleFrame()">🖼 Mở browser ẩn</span></div>
+<div class="iframe-container" id="iframeBox">
+<iframe id="hiddenFrame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>
 </div>
 <div class="log-box" id="logBox"></div>
 </div>
@@ -67,7 +76,7 @@ button.loading{opacity:0.6;pointer-events:none}
 var finalLink='';
 var logVisible=true;
 
-document.getElementById('linkInput').addEventListener('keydown',function(e){if(e.key==='Enter')bypass()});
+document.getElementById('linkInput').addEventListener('keydown',function(e){if(e.key==='Enter')openInFrame()});
 
 function log(msg,type){
 var lb=document.getElementById('logBox');
@@ -77,176 +86,99 @@ lb.innerHTML+='<div class="log-line '+cls+'">'+msg+'</div>';
 lb.scrollTop=lb.scrollHeight;
 }
 
-function toggleLog(){
-logVisible=!logVisible;
-var lb=document.getElementById('logBox');
-if(logVisible)lb.classList.add('show');else lb.classList.remove('show');
-}
+function toggleLog(){logVisible=!logVisible;var lb=document.getElementById('logBox');if(logVisible)lb.classList.add('show');else lb.classList.remove('show')}
+function toggleFrame(){var f=document.getElementById('iframeBox');if(f.classList.contains('show'))f.classList.remove('show');else f.classList.add('show')}
 
-function showLoading(show){
-var s=document.getElementById('spinner');
-var b=document.getElementById('btnBypass');
-if(show){s.classList.add('show');b.classList.add('loading');b.textContent='ĐANG XỬ LÝ...'}
-else{s.classList.remove('show');b.classList.remove('loading');b.textContent='⚡ BYPASS'}
-}
-
-function showResult(msg,type){
-var rb=document.getElementById('resultBox');
-rb.className='result-box';
-if(type==='success')rb.classList.add('success');
-else if(type==='error')rb.classList.add('error');
-else rb.classList.add('info');
-rb.innerHTML=msg;
-}
-
-async function bypass(){
+function openInFrame(){
 var input=document.getElementById('linkInput');
 var url=input.value.trim();
+var frame=document.getElementById('hiddenFrame');
+var frameBox=document.getElementById('iframeBox');
 var logBox=document.getElementById('logBox');
-var btnOpen=document.getElementById('btnOpen');
+var btnCopy=document.getElementById('btnCopy');
+var resultBox=document.getElementById('resultBox');
 
 logBox.innerHTML='';
-btnOpen.style.display='none';
+btnCopy.style.display='none';
 finalLink='';
+resultBox.className='result-box';
+resultBox.innerHTML='<span class="placeholder">Đang mở link trong browser ẩn...</span>';
 
-if(!url){showResult('⚠ Vui lòng nhập link!','error');return}
+if(!url){resultBox.className='result-box error';resultBox.innerHTML='⚠ Vui lòng nhập link!';return}
 
-log('🔍 Bắt đầu bypass...','info');
-log('📎 Link: '+url,'info');
-showLoading(true);
-showResult('Đang xử lý...','info');
+log('🔍 Đang mở: '+url.substring(0,50)+'...','info');
+log('💡 Browser ẩn sẽ load trang Link4m thật','info');
+log('⏳ Chờ Cloudflare challenge hoàn thành...','info');
+log('📋 Sau đó copy link đích từ browser ẩn','info');
 
-var result=null;
+frameBox.classList.add('show');
+frame.src=url;
 
-// Method 1: Bypass.pm API
-log('📡 Method 1: Bypass.pm API','info');
+// Lắng nghe khi iframe load xong
+frame.onload=function(){
 try{
-var res1=await fetch('https://bypass.pm/bypass',{
-method:'POST',
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify({url:url})
-});
-if(res1.ok){
-var data=await res1.json();
-log('✅ Bypass.pm response: '+JSON.stringify(data).substring(0,100),'good');
-if(data.destination){result=data.destination;log('🎯 CÓ LINK: '+result,'good')}
-else if(data.url){result=data.url;log('🎯 CÓ LINK: '+result,'good')}
-else{log('⚠ Response không có destination/url','warn')}
-}else{log('❌ HTTP '+res1.status,'bad')}
-}catch(e){log('❌ Lỗi: '+e.message,'bad')}
+var iframeUrl=frame.contentWindow.location.href;
+log('✅ Browser ẩn đã load: '+iframeUrl.substring(0,60)+'...','good');
 
-// Method 2: Jina AI
-if(!result){
-log('📡 Method 2: Jina AI','info');
-try{
-var targetUrl='https://r.jina.ai/https://'+url.replace('https://','').replace('http://','');
-var res2=await fetch(targetUrl,{headers:{'Accept':'text/markdown'}});
-if(res2.ok){
-var text=await res2.text();
-log('✅ Jina OK - '+text.length+' ký tự','good');
-if(text.indexOf('turnstile')!==-1||text.indexOf('cloudflare')!==-1){
-log('⚠ Jina bị Cloudflare chặn','warn');
+// Nếu đã redirect ra link khác (không còn link4m)
+if(iframeUrl.indexOf('link4m')===-1&&iframeUrl.indexOf('cloudflare')===-1){
+finalLink=iframeUrl;
+resultBox.className='result-box success';
+resultBox.innerHTML='✅ '+finalLink;
+btnCopy.style.display='block';
+log('🎯 BYPASS THÀNH CÔNG!','good');
+log('🔗 Link gốc: '+finalLink,'info');
 }else{
-// Tìm link
-var urls=text.match(/https?:\/\/[^\s\n\r\)\"\']+/gi);
-if(urls){
-var clean=[];
-for(var i=0;i<urls.length;i++){
-var u=urls[i];
-if(u.indexOf('link4m')===-1&&u.indexOf('cloudflare')===-1&&u.indexOf('jina.ai')===-1&&u.length>20)clean.push(u);
+log('⚠ Vẫn ở trang Link4m/Cloudflare, cần click thủ công','warn');
+log('💡 Hãy bấm nút "Tôi là người" trong browser ẩn bên dưới','info');
+log('📋 Sau đó copy link từ browser ẩn','info');
 }
-if(clean.length>0){
-// Chọn link dài nhất
-result=clean[0];
-for(var j=1;j<clean.length;j++){if(clean[j].length>result.length)result=clean[j]}
-log('🎯 Tìm thấy '+clean.length+' link, chọn: '+result.substring(0,80),'good');
-}else{log('⚠ Không tìm thấy link hợp lệ','warn')}
+}catch(e){
+log('⚠ Không đọc được iframe (cross-origin)','warn');
+log('💡 Hãy nhìn browser ẩn bên dưới và copy link thủ công','info');
+log('📋 Khi trang đích load xong, bấm nút "Tôi là người" rồi copy URL','info');
 }
-}
-}else{log('❌ HTTP '+res2.status,'bad')}
-}catch(e){log('❌ Lỗi: '+e.message,'bad')}
-}
+};
 
-// Method 3: Proxy
-if(!result){
-log('📡 Method 3: Proxy fetch','info');
-var proxies=['https://api.allorigins.win/raw?url=','https://corsproxy.io/?'];
-for(var p=0;p<proxies.length;p++){
-if(result)break;
+// Fallback: thử bypass bằng API sau 5 giây
+setTimeout(async function(){
+if(!finalLink){
+log('📡 Thử bypass API trong lúc chờ...','info');
 try{
-var proxyUrl=proxies[p]+encodeURIComponent(url);
-var res3=await fetch(proxyUrl,{headers:{'User-Agent':'Mozilla/5.0'}});
-if(res3.ok){
-var html=await res3.text();
-log('✅ Proxy #'+(p+1)+' OK - '+html.length+' ký tự','good');
-if(html.indexOf('cloudflare')===-1&&html.indexOf('turnstile')===-1){
-// Extract
-var urls=html.match(/https?:\/\/[^\s\"\'<>\[\]]+/gi);
-if(urls){
-var clean=[];
-for(var i=0;i<urls.length;i++){
-var u=urls[i];
-if(u.indexOf('link4m')===-1&&u.indexOf('cloudflare')===-1&&u.indexOf('google')===-1&&u.indexOf('facebook')===-1&&u.indexOf('.js')===-1&&u.indexOf('.css')===-1&&u.length>25)clean.push(u);
+var res=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
+if(res.ok){var d=await res.json();if(d.destination||d.url){var link=d.destination||d.url;finalLink=link;resultBox.className='result-box success';resultBox.innerHTML='✅ '+link;btnCopy.style.display='block';log('🎯 API bypass thành công!','good');}}
+}catch(e){log('❌ API fallback thất bại','bad')}
 }
-if(clean.length>0){
-result=clean[0];
-for(var j=1;j<clean.length;j++){if(clean[j].length>result.length)result=clean[j]}
-log('🎯 Tìm thấy link: '+result.substring(0,80),'good');
-break;
-}
-}
-}else{log('⚠ Proxy #'+(p+1)+' bị Cloudflare','warn')}
-}else{log('❌ HTTP '+res3.status,'bad')}
-}catch(e){log('❌ Proxy #'+(p+1)+': '+e.message,'bad')}
-}
-}
-
-showLoading(false);
-
-if(result){
-result=result.replace(/\\/g,'').replace(/&amp;/g,'&').trim();
-if(result.indexOf('http')!==0)result='https://'+result.replace(/^\/+/,'');
-finalLink=result;
-showResult('✅ '+result,'success');
-btnOpen.style.display='block';
-log('🏆 THÀNH CÔNG!','good');
-log('🔗 '+result,'info');
-}else{
-showResult('❌ KHÔNG BYPASS ĐƯỢC\nLink bị Cloudflare hoặc đã chết\nThử link khác nhé!','error');
-log('💀 THẤT BẠI - Tất cả method đều thất bại','bad');
-}
+},5000);
 }
 
 function copyLink(){
+if(!finalLink&&document.getElementById('hiddenFrame').contentWindow){
+try{finalLink=document.getElementById('hiddenFrame').contentWindow.location.href}catch(e){}
+}
 if(finalLink&&finalLink.indexOf('http')===0){
 navigator.clipboard.writeText(finalLink).then(function(){
-var t=document.getElementById('toast');
-t.classList.add('show');
+var t=document.getElementById('toast');t.classList.add('show');
 setTimeout(function(){t.classList.remove('show')},1500);
 }).catch(function(){
-var ta=document.createElement('textarea');
-ta.value=finalLink;
+var ta=document.createElement('textarea');ta.value=finalLink;
 ta.style.position='fixed';ta.style.left='-9999px';
 document.body.appendChild(ta);ta.select();
-document.execCommand('copy');
-document.body.removeChild(ta);
-var t=document.getElementById('toast');
-t.classList.add('show');
+document.execCommand('copy');document.body.removeChild(ta);
+var t=document.getElementById('toast');t.classList.add('show');
 setTimeout(function(){t.classList.remove('show')},1500);
 });
 }
-}
-
-function openLink(){
-if(finalLink&&finalLink.indexOf('http')===0)window.open(finalLink,'_blank');
 }
 
 function clearAll(){
 document.getElementById('linkInput').value='';
 document.getElementById('resultBox').className='result-box';
-document.getElementById('resultBox').innerHTML='<span class="placeholder">Kết quả sẽ hiện ở đây...</span>';
+document.getElementById('resultBox').innerHTML='<span class="placeholder">Link gốc sẽ hiện ở đây...</span>';
 document.getElementById('logBox').innerHTML='';
-document.getElementById('btnOpen').style.display='none';
+document.getElementById('btnCopy').style.display='none';
+document.getElementById('iframeBox').classList.remove('show');
+document.getElementById('hiddenFrame').src='';
 finalLink='';
 document.getElementById('linkInput').focus();
 }
