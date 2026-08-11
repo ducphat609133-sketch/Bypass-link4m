@@ -3,45 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Link4m Bypass - Devils Will Rise</title>
+<title>Multi Bypass - Devils Will Rise</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',sans-serif}
-.wrapper{width:90%;max-width:500px;text-align:center;padding:20px}
-.logo{font-family:'Courier New',monospace;font-size:clamp(24px,5vw,36px);font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c,0 0 40px #ff003c;letter-spacing:3px;margin-bottom:5px;animation:flicker 2s infinite alternate}
+.wrapper{width:90%;max-width:550px;text-align:center;padding:20px}
+.logo{font-family:'Courier New',monospace;font-size:clamp(22px,5vw,32px);font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c,0 0 40px #ff003c;letter-spacing:3px;margin-bottom:5px;animation:flicker 2s infinite alternate}
 @keyframes flicker{0%,100%{opacity:1}50%{opacity:0.8}}
-.subtitle{color:#666;font-size:11px;margin-bottom:25px;letter-spacing:2px}
+.subtitle{color:#666;font-size:10px;margin-bottom:20px;letter-spacing:2px}
 .subtitle span{color:#ff003c}
+.badge-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-bottom:18px}
+.badge{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:4px 10px;font-size:10px;color:#888;cursor:pointer;transition:all 0.2s}
+.badge:hover{border-color:#ff003c;color:#ff003c}
+.badge.active{background:#ff003c;color:#fff;border-color:#ff003c}
 .card{background:#111;border:1px solid #222;border-radius:16px;padding:25px;box-shadow:0 0 40px rgba(255,0,60,0.1)}
 .input-group{position:relative;margin-bottom:15px}
-.input-group input{width:100%;padding:15px 45px 15px 18px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:15px;outline:none;transition:all 0.3s}
+.input-group input{width:100%;padding:15px 45px 15px 18px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:14px;outline:none;transition:all 0.3s}
 .input-group input:focus{border-color:#ff003c;box-shadow:0 0 20px rgba(255,0,60,0.2)}
 .input-group input::placeholder{color:#555}
 .input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#555;font-size:18px;pointer-events:none}
 .input-group input:focus~.input-icon{color:#ff003c}
-.btn-bypass{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:2px;text-transform:uppercase}
+.btn-row{display:flex;gap:8px}
+.btn-bypass{flex:1;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:2px;text-transform:uppercase}
 .btn-bypass:active{transform:scale(0.97)}
 .btn-bypass.loading{pointer-events:none;opacity:0.7}
-.result-box{margin-top:18px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:18px;min-height:55px;display:flex;align-items:center;justify-content:center;word-break:break-all;cursor:pointer}
+.btn-open{width:50px;background:#222;color:#ff003c;border:1px solid #ff003c;border-radius:25px;font-size:18px;cursor:pointer;display:none}
+.btn-open.show{display:block}
+.result-box{margin-top:18px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:18px;min-height:55px;display:flex;align-items:center;justify-content:center;word-break:break-all;cursor:pointer;flex-direction:column;gap:5px}
 .result-box.success{border-color:#00ff41;box-shadow:0 0 20px rgba(0,255,65,0.1)}
 .result-box.error{border-color:#ff003c}
-.result-text{color:#00ff41;font-size:15px;font-family:'Courier New',monospace}
+.result-text{color:#00ff41;font-size:14px;font-family:'Courier New',monospace}
+.result-type{color:#ffcc00;font-size:10px;text-transform:uppercase;letter-spacing:1px}
 .result-placeholder{color:#333;font-size:13px}
 .copy-hint{color:#666;font-size:11px;margin-top:8px;opacity:0}
 .copy-hint.visible{opacity:1}
 .spinner{width:22px;height:22px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.7s linear infinite;display:none;margin:10px auto 0}
 .spinner.active{display:block}
 @keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:10px 25px;border-radius:20px;font-weight:bold;font-size:13px;z-index:999;opacity:0;pointer-events:none}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:10px 25px;border-radius:20px;font-weight:bold;font-size:13px;z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s}
 .toast.show{opacity:1}
-.quick-links{margin-top:20px;display:flex;justify-content:center;gap:15px}
-.quick-link{color:#444;font-size:11px;cursor:pointer}
-.quick-link:hover{color:#ff003c}
+.footer-row{margin-top:18px;display:flex;justify-content:center;gap:15px;flex-wrap:wrap}
+.footer-link{color:#444;font-size:10px;cursor:pointer;transition:color 0.2s}
+.footer-link:hover{color:#ff003c}
 .log-box{margin-top:10px;background:#0a0a0a;border-radius:8px;padding:10px;max-height:100px;overflow-y:auto;display:none}
 .log-box.active{display:block}
-.log-line{color:#555;font-size:10px;font-family:'Courier New',monospace;text-align:left;padding:2px 0}
+.log-line{color:#555;font-size:9px;font-family:'Courier New',monospace;text-align:left;padding:1px 0}
 .log-line.good{color:#00ff41}
 .log-line.bad{color:#ff4444}
+.log-line.info{color:#ffcc00}
 </style>
 </head>
 <body>
@@ -49,140 +58,380 @@ body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;m
 <div class="wrapper">
 <div class="logo">DEVILS WILL RISE</div>
 <div class="subtitle">Owner <span>@DP</span> | <span>@SGCodexs</span></div>
+<div class="badge-row" id="badgeRow">
+<span class="badge active" data-site="auto">🤖 AUTO</span>
+<span class="badge" data-site="link4m">Link4m</span>
+<span class="badge" data-site="ouo">OUO.io</span>
+<span class="badge" data-site="shrinkme">ShrinkMe</span>
+<span class="badge" data-site="shortconnect">ShortConnect</span>
+<span class="badge" data-site="workink">Work.ink</span>
+<span class="badge" data-site="adfly">AdFly</span>
+<span class="badge" data-site="bitly">Bit.ly</span>
+<span class="badge" data-site="shorturl">ShortURL</span>
+<span class="badge" data-site="tinyurl">TinyURL</span>
+</div>
 <div class="card">
 <div class="input-group">
-<input type="text" id="linkInput" placeholder="Dán link Link4m vào đây..." autocomplete="off" autofocus>
+<input type="text" id="linkInput" placeholder="Dán link rút gọn vào đây..." autocomplete="off" autofocus>
 <span class="input-icon">🔗</span>
 </div>
+<div class="btn-row">
 <button class="btn-bypass" id="btnBypass" onclick="bypassLink()">⚡ BYPASS NGAY</button>
+<button class="btn-open" id="btnOpen" onclick="openResult()" title="Mở link">↗</button>
+</div>
 <div class="spinner" id="spinner"></div>
 <div class="result-box" id="resultBox" onclick="copyResult()">
-<span class="result-placeholder">Link gốc hoặc key sẽ hiện ở đây...</span>
+<span class="result-placeholder">Link gốc sẽ hiện ở đây...</span>
 </div>
-<div class="copy-hint" id="copyHint">👆 Click vào link để copy</div>
+<div class="copy-hint" id="copyHint">👆 Click để copy | ↗ Mở trực tiếp</div>
 <div class="log-box" id="logBox"></div>
 </div>
-<div class="quick-links">
-<span class="quick-link" onclick="clearInput()">🗑 Clear</span>
+<div class="footer-row">
+<span class="footer-link" onclick="clearInput()">🗑 Clear</span>
 <span style="color:#333">|</span>
-<span class="quick-link">💀 @SGCodexs</span>
+<span class="footer-link">💀 @SGCodexs</span>
+<span style="color:#333">|</span>
+<span class="footer-link" onclick="toggleLog()">📋 Log</span>
 </div>
 </div>
 <script>
 var currentResult='';
+var currentSite='auto';
+var logVisible=false;
+
+// Badge click
+document.getElementById('badgeRow').addEventListener('click',function(e){
+if(e.target.classList.contains('badge')){
+document.querySelectorAll('.badge').forEach(function(b){b.classList.remove('active')});
+e.target.classList.add('active');
+currentSite=e.target.dataset.site;
+document.getElementById('linkInput').focus();
+}
+});
+
 document.getElementById('linkInput').addEventListener('keydown',function(e){if(e.key==='Enter')bypassLink()});
-function addLog(msg,good){var lb=document.getElementById('logBox');lb.classList.add('active');var cls=good===true?'good':(good===false?'bad':'');lb.innerHTML+='<div class="log-line '+cls+'">'+msg+'</div>';lb.scrollTop=lb.scrollHeight}
+
+function addLog(msg,type){
+var lb=document.getElementById('logBox');
+var cls=type==='good'?'good':(type==='bad'?'bad':(type==='info'?'info':''));
+lb.innerHTML+='<div class="log-line '+cls+'">'+msg+'</div>';
+lb.scrollTop=lb.scrollHeight;
+}
+
+function toggleLog(){
+logVisible=!logVisible;
+var lb=document.getElementById('logBox');
+if(logVisible){lb.classList.add('active')}else{lb.classList.remove('active')}
+}
+
+function detectSite(url){
+var lower=url.toLowerCase();
+
+// ===== LINK4M: cả .com và .net =====
+if(lower.includes('link4m.com')||lower.includes('link4m.net')||lower.includes('link4m.'))return'link4m';
+
+// ===== CÁC LOẠI KHÁC =====
+if(lower.includes('ouo.io')||lower.includes('ouo.press'))return'ouo';
+if(lower.includes('shrinkme.io')||lower.includes('shrinkme.'))return'shrinkme';
+if(lower.includes('shortconnect.com')||lower.includes('shortconnect.'))return'shortconnect';
+if(lower.includes('work.ink'))return'workink';
+if(lower.includes('adf.ly')||lower.includes('adfoc.us')||lower.includes('j.gs')||lower.includes('q.gs')||lower.includes('ay.gy')||lower.includes('atominik.com'))return'adfly';
+if(lower.includes('bit.ly')||lower.includes('bitly.'))return'bitly';
+if(lower.includes('shorturl.at')||lower.includes('shorturl.'))return'shorturl';
+if(lower.includes('tinyurl.com')||lower.includes('tinyurl.'))return'tinyurl';
+if(lower.includes('shorte.st')||lower.includes('gestyy.com')||lower.includes('destyy.com')||lower.includes('clik.pw'))return'shortest';
+if(lower.includes('google.com/url')||lower.includes('google.com/amp'))return'google';
+if(lower.includes('megalink.vip')||lower.includes('megalink.'))return'megalink';
+if(lower.includes('123link.')||lower.includes('123link.co'))return'123link';
+if(lower.includes('taimienphi.vip')||lower.includes('taimienphi.'))return'taimienphi';
+
+return'unknown';
+}
+
+function getSiteName(site){
+var map={
+link4m:'Link4m (.com / .net)',
+ouo:'OUO.io',
+shrinkme:'ShrinkMe',
+shortconnect:'ShortConnect',
+workink:'Work.ink',
+adfly:'AdFly',
+bitly:'Bit.ly',
+shorturl:'ShortURL',
+tinyurl:'TinyURL',
+shortest:'Short.est',
+google:'Google Redirect',
+megalink:'MegaLink',
+'123link':'123Link',
+taimienphi:'TaiMienPhi',
+unknown:'Unknown'
+};
+return map[site]||site;
+}
+
 async function bypassLink(){
-var input=document.getElementById('linkInput'),btn=document.getElementById('btnBypass'),spinner=document.getElementById('spinner'),resultBox=document.getElementById('resultBox'),copyHint=document.getElementById('copyHint'),logBox=document.getElementById('logBox'),url=input.value.trim();
-logBox.innerHTML='';logBox.classList.add('active');
-if(!url){showResult('⚠ Vui lòng nhập link Link4m!',false);return}
-if(!url.includes('link4m.com')&&!url.includes('link4m.')){showResult('❌ Đây không phải link Link4m!',false);return}
+var input=document.getElementById('linkInput'),btn=document.getElementById('btnBypass'),
+spinner=document.getElementById('spinner'),resultBox=document.getElementById('resultBox'),
+copyHint=document.getElementById('copyHint'),logBox=document.getElementById('logBox'),
+btnOpen=document.getElementById('btnOpen'),url=input.value.trim();
+
+logBox.innerHTML='';logBox.classList.add('active');logVisible=true;
+if(!url){showResult('⚠ Vui lòng nhập link!',false);return}
+
+var site=currentSite==='auto'?detectSite(url):currentSite;
+addLog('🔍 Phát hiện: '+getSiteName(site),'info');
+addLog('📎 Link: '+url.substring(0,60)+(url.length>60?'...':''));
+
 btn.classList.add('loading');btn.textContent='ĐANG XỬ LÝ...';spinner.classList.add('active');
 resultBox.className='result-box';resultBox.innerHTML='';copyHint.classList.remove('visible');
-currentResult='';var finalLink=null;
-addLog('🔍 Bắt đầu bypass...');
-var proxyList=['https://api.codetabs.com/v1/proxy?quest=','https://corsproxy.io/?','https://api.allorigins.win/raw?url='];
+btnOpen.classList.remove('show');currentResult='';
+var finalLink=null;
+
+// ===== GOOGLE REDIRECT =====
+if(site==='google'){
+addLog('📡 Xử lý Google Redirect...','info');
+var match=url.match(/[?&]url=([^&]+)/i);
+if(match){finalLink=decodeURIComponent(match[1]);addLog('✅ Đã extract Google redirect','good')}
+else{var match2=url.match(/[?&]q=([^&]+)/i);if(match2){finalLink=decodeURIComponent(match2[1]);addLog('✅ Đã extract Google q param','good')}}
+}
+
+// ===== BIT.LY / TINYURL / SHORTURL =====
+if(!finalLink&&(site==='bitly'||site==='tinyurl'||site==='shorturl'||site==='unknown')){
+addLog('📡 Thử resolve short link...','info');
+try{
+var resolveRes=await fetch(url,{method:'HEAD',redirect:'follow',headers:{'User-Agent':'Mozilla/5.0'}});
+if(resolveRes.redirected&&resolveRes.url!==url){
+finalLink=resolveRes.url;
+addLog('✅ Resolved: '+finalLink.substring(0,50)+'...','good');
+}else{addLog('⚠ Không redirect, thử GET...');}
+}catch(e){addLog('❌ HEAD failed: '+e.message.substring(0,30),'bad')}
+if(!finalLink){
+try{
+var getRes=await fetch(url,{redirect:'follow',headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}});
+if(getRes.redirected&&getRes.url!==url){finalLink=getRes.url;addLog('✅ GET resolved: '+finalLink.substring(0,50)+'...','good')}
+}catch(e){}
+}
+}
+
+// ===== METHOD CHÍNH: Fetch HTML + Extract =====
+if(!finalLink){
+addLog('📡 Fetch HTML để extract link...','info');
+var proxyList=['','https://api.codetabs.com/v1/proxy?quest=','https://corsproxy.io/?'];
 for(var i=0;i<proxyList.length;i++){
 if(finalLink)break;
 try{
-addLog('Thử proxy #'+(i+1)+'...');
-var proxyUrl=proxyList[i]+encodeURIComponent(url);
-var controller=new AbortController();
-var timeout=setTimeout(function(){controller.abort()},8000);
-var res=await fetch(proxyUrl,{signal:controller.signal});
+var fetchUrl=proxyList[i]?proxyList[i]+encodeURIComponent(url):url;
+var opts={headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36','Accept':'text/html,application/xhtml+xml','Accept-Language':'vi-VN,vi;q=0.9,en;q=0.8'}};
+if(!proxyList[i])opts.mode='cors';
+var controller=new AbortController();opts.signal=controller.signal;
+var timeout=setTimeout(function(){controller.abort()},10000);
+var res=await fetch(fetchUrl,opts);
 clearTimeout(timeout);
 if(res.ok){
 var html=await res.text();
-addLog('✅ Proxy #'+(i+1)+' OK','good');
-var extracted=extractLinksFromHTML(html);
+addLog('✅ '+(proxyList[i]?'Proxy #'+(i+1):'Direct')+' OK ('+(html.length/1024).toFixed(1)+'KB)','good');
+var extracted=extractAllLinks(html,url,site);
 if(extracted){finalLink=extracted;addLog('🎯 TÌM THẤY LINK!','good');break}
-else{addLog('⚠ Không tìm thấy link')}
+else{addLog('⚠ Không tìm thấy link');}
 }else{addLog('❌ HTTP '+res.status,'bad')}
-}catch(e){addLog('❌ Lỗi: '+e.message.substring(0,40),'bad')}
+}catch(e){addLog('❌ '+(proxyList[i]?'Proxy #'+(i+1):'Direct')+': '+e.message.substring(0,30),'bad')}
 }
+}
+
+// ===== JINA AI FALLBACK =====
 if(!finalLink){
-addLog('📡 Method 2: Jina AI...');
+addLog('📡 Jina AI fallback...','info');
 try{
-var jinaRes=await fetch('https://r.jina.ai/https://'+url.replace('https://','').replace('http://',''),{headers:{'Accept':'text/markdown'}});
+var jinaRes=await fetch('https://r.jina.ai/https://'+url.replace('https://','').replace('http://',''),{headers:{'Accept':'text/markdown','User-Agent':'Mozilla/5.0'}});
 if(jinaRes.ok){
 var md=await jinaRes.text();
 addLog('✅ Jina OK','good');
-var urls=md.match(/https?:\/\/[^\s\n\r\)\"]+/gi);
-if(urls){
-var candidates=urls.filter(function(u){return !u.includes('link4m')&&!u.includes('jina.ai')&&u.length>20});
-if(candidates.length>0){finalLink=candidates.reduce(function(a,b){return a.length>b.length?a:b});addLog('🎯 TÌM THẤY LINK!','good')}
+var extracted=extractAllLinks(md,url,site);
+if(extracted){finalLink=extracted;addLog('🎯 TÌM THẤY LINK!','good')}
 }
+}catch(e){addLog('❌ Jina: '+e.message.substring(0,30),'bad')}
 }
-}catch(e){addLog('❌ Lỗi: '+e.message.substring(0,40),'bad')}
+
+// ===== SITE-SPECIFIC BYPASS API =====
+if(!finalLink){
+addLog('📡 Thử bypass API cho '+getSiteName(site)+'...','info');
+try{
+var bypassApis={
+link4m:'https://bypass.pm/bypass',
+ouo:'https://bypass.pm/bypass',
+shrinkme:'https://bypass.pm/bypass',
+shortconnect:'https://bypass.pm/bypass',
+workink:'https://bypass.pm/bypass',
+adfly:'https://bypass.pm/bypass',
+megalink:'https://bypass.pm/bypass',
+'123link':'https://bypass.pm/bypass',
+taimienphi:'https://bypass.pm/bypass'
+};
+if(bypassApis[site]){
+var apiRes=await fetch(bypassApis[site],{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
+if(apiRes.ok){var data=await apiRes.json();if(data.destination){finalLink=data.destination}else if(data.url){finalLink=data.url};if(finalLink)addLog('✅ Bypass API OK','good')}
 }
+}catch(e){addLog('❌ API: '+e.message.substring(0,30),'bad')}
+}
+
 btn.classList.remove('loading');btn.textContent='⚡ BYPASS NGAY';spinner.classList.remove('active');
+
 if(finalLink){
-finalLink=finalLink.replace(/\\/g,'').replace(/&amp;/g,'&');
-if(!finalLink.startsWith('http'))finalLink='https://'+finalLink.replace(/^\/+/,'');
+finalLink=cleanUrl(finalLink);
 currentResult=finalLink;
-showResult(finalLink,true);
-addLog('✅ THÀNH CÔNG!','good');
+var linkType=getLinkType(finalLink);
+showResult(finalLink,true,getSiteName(site)+' → '+linkType);
+btnOpen.classList.add('show');
+addLog('✅ THÀNH CÔNG! ['+linkType+']','good');
 }else{
-showResult('❌ Không bypass được link này!',false);
+showResult('❌ Không bypass được. Thử mở link bằng Chrome!',false);
 addLog('💀 THẤT BẠI','bad');
+addLog('💡 Mẹo: Bấm F12 → Network → Tìm redirect URL','info');
 }
 }
-function extractLinksFromHTML(html){
-html=html.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\\\//g,'/');
+
+function extractAllLinks(html,url,site){
+html=html.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\\\//g,'/').replace(/\\"/g,'"');
+
 var patterns=[
-/<meta[^>]*http-equiv=["']refresh["'][^>]*content=["']\d+;\s*url=([^"'\s>]+)/i,
-/window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']+)["']/i,
-/location\.(?:replace|assign|href)\s*\(\s*["']([^"']+)["']\s*\)/i,
-/<a[^>]*href=["'](https?:\/\/[^"']+?)["'][^>]*>\s*(?:click|continue|get|download|tải|nhận|here|tiếp|vào|link|đi|go|open|access|visit)\s*<\/a>/i,
-/data-(?:url|link|href|redirect|target|dest|go)\s*=\s*["']([^"']+)["']/i,
-/atob\s*\(\s*["']([A-Za-z0-9+/=]+)["']\s*\)/,
-/<form[^>]*action=["'](https?:\/\/[^"']+)["']/i
+/<meta[^>]*http-equiv\s*=\s*["']refresh["'][^>]*content\s*=\s*["']\d+\s*;\s*url\s*=\s*([^"'\s>]+)/i,
+/content\s*=\s*["']\d+\s*;\s*url\s*=\s*([^"'\s>]+)/i,
+/window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']+)["']/gi,
+/location\.(?:replace|assign|href)\s*\(\s*["']([^"']+)["']\s*\)/gi,
+/window\.open\s*\(\s*["']([^"']+)["']/i,
+/<a[^>]*href\s*=\s*["'](https?:\/\/[^"']+?)["'][^>]*>(?:.*?(?:click|continue|get|download|tải|nhận|here|tiếp|truy cập|vào|link|đi|go|open|access|visit|proceed|next|direct|skip|unlock|verify|human).*?)<\/a>/i,
+/<a[^>]*href\s*=\s*["'](https?:\/\/[^"']+?)["'][^>]*class\s*=\s*["'][^"']*(?:btn|button|link|redirect|go|get|dl|download|skip|unlock|continue)[^"']*["']/i,
+/<a[^>]*href\s*=\s*["'](https?:\/\/[^"']+?)["'][^>]*id\s*=\s*["'][^"']*(?:btn|button|link|redirect|go|get|dl|download|skip|continue)[^"']*["']/i,
+/onclick\s*=\s*["'][^"']*(?:location|window\.open|href)\s*[=\(]\s*["']([^"']+)["'][^"']*["']/i,
+/data-(?:url|link|href|redirect|target|dest|go|download|file)\s*=\s*["'](https?:\/\/[^"']+)["']/i,
+/atob\s*\(\s*["']([A-Za-z0-9+/=]{20,})["']\s*\)/,
+/<form[^>]*action\s*=\s*["'](https?:\/\/[^"']+)["']/i,
+/(?:var|let|const)\s+\w+\s*=\s*["'](https?:\/\/[^\s"'<>]{20,}?)["']/gi,
+/["'](?:url|link|redirect|target|dest|download|file|get|go|direct|source|drive)["']\s*:\s*["'](https?:\/\/[^"']{10,}?)["']/gi,
+/href\s*=\s*["'](https?:\/\/[^"']{15,}?)["']/gi,
 ];
+
+var foundLinks=[];
 for(var i=0;i<patterns.length;i++){
-var match=html.match(patterns[i]);
-if(match&&match[1]){
-var found=match[1];
-if(found.startsWith('//'))found='https:'+found;
-if(found.startsWith('http')&&!found.includes('link4m')&&!found.includes('google.com')&&!found.includes('facebook.com')&&!found.includes('.js')&&!found.includes('.css')&&!found.includes('.png')&&!found.includes('.jpg')&&found.length>15)return found;
+var p=patterns[i];
+if(p.flags&&p.flags.includes('g')){
+var matches=html.matchAll(p);
+for(var m of matches){if(m[1])foundLinks.push(m[1])}
+}else{
+var match=html.match(p);
+if(match&&match[1])foundLinks.push(match[1]);
 }
 }
-var allUrls=html.match(/https?:\/\/[^\s"'<>\[\]{}()]+/gi);
-if(allUrls){
-var blacklist=['link4m','google','facebook','twitter','youtube','instagram','cdn','.js','.css','.png','.jpg','.svg','.ico','ajax','api.'];
-var candidates=allUrls.filter(function(u){var lower=u.toLowerCase();return !blacklist.some(function(b){return lower.includes(b)})&&u.length>25});
-if(candidates.length>0){
-var priority=['drive','download','file','get','key','code','paste','source','dll','media','share','direct','raw','bit.','mega','dropbox','mediafire','zippy','gg'];
-for(var j=0;j<priority.length;j++){var found=candidates.find(function(u){return u.toLowerCase().includes(priority[j])});if(found)return found}
-return candidates.reduce(function(a,b){return a.length>b.length?a:b});
+
+// Thêm tất cả URL trong HTML
+var allUrls=html.match(/https?:\/\/[^\s"'<>\[\]{}()]{10,}/gi);
+if(allUrls)foundLinks=foundLinks.concat(allUrls);
+
+addLog('  📎 Tìm thấy '+foundLinks.length+' link tiềm năng');
+
+// Blacklist mở rộng - chặn tất cả domain rút gọn
+var blacklist=[
+'link4m.com','link4m.net','link4m.',
+'ouo.io','ouo.press',
+'shrinkme.io','shrinkme.',
+'shortconnect.com','shortconnect.',
+'work.ink',
+'adf.ly','adfoc.us','j.gs','q.gs','ay.gy','atominik.com',
+'bit.ly','bitly.',
+'shorturl.at','shorturl.',
+'tinyurl.com','tinyurl.',
+'shorte.st','gestyy.com','destyy.com','clik.pw',
+'google.com','facebook.com','twitter.com','youtube.com',
+'instagram.com','tiktok.com','cloudflare.com',
+'w3.org','schema.org','jquery','bootstrap','fontawesome',
+'googletagmanager','gstatic','googleapis',
+'.js','.css','.png','.jpg','.jpeg','.svg','.ico','.gif',
+'.woff','.ttf','.eot','ajax','analytics','gtag',
+'facebook.net','doubleclick','pinterest','linkedin',
+'reddit','whatsapp','telegram'
+];
+
+var cleanLinks=foundLinks.map(function(u){
+u=u.replace(/\\/g,'').replace(/&amp;/g,'&').trim();
+if(u.startsWith('//'))u='https:'+u;
+return u;
+}).filter(function(u){
+if(!u.startsWith('http'))return false;
+var lower=u.toLowerCase();
+return !blacklist.some(function(b){return lower.includes(b)})&&u.length>15;
+});
+
+cleanLinks=[...new Set(cleanLinks)];
+addLog('  🔍 Sau khi lọc: '+cleanLinks.length+' link sạch');
+if(cleanLinks.length===0)return null;
+
+// Link đích thường chứa keyword đặc trưng
+var priority=[
+'drive.google.com','docs.google.com',
+'mega.nz','mediafire.com','dropbox.com',
+'zippyshare.com','pastebin.com',
+'raw.githubusercontent.com','github.com',
+'download','file','get','key','code','paste','source',
+'dll','media','share','direct','raw',
+'.zip','.rar','.7z','.exe','.apk','.ipa','.pdf','.mp4','.mp3'
+];
+
+for(var j=0;j<priority.length;j++){
+var found=cleanLinks.find(function(u){return u.toLowerCase().includes(priority[j])});
+if(found){addLog('  ⭐ Link ưu tiên: '+priority[j]);return found}
 }
+return cleanLinks.reduce(function(a,b){return a.length>b.length?a:b});
 }
-return null;
+
+function cleanUrl(url){
+url=url.replace(/\\/g,'').replace(/&amp;/g,'&').replace(/%3A/g,':').replace(/%2F/g,'/').replace(/%3F/g,'?').replace(/%3D/g,'=').replace(/%26/g,'&').replace(/%25/g,'%').trim();
+if(!url.startsWith('http'))url='https://'+url.replace(/^\/+/,'');
+return url;
 }
-function showResult(msg,success){
-var rb=document.getElementById('resultBox'),ch=document.getElementById('copyHint');
+
+function getLinkType(url){
+var lower=url.toLowerCase();
+if(lower.includes('drive.google.com'))return'📁 Google Drive';
+if(lower.includes('docs.google.com'))return'📄 Google Docs';
+if(lower.includes('mega.nz'))return'📦 MEGA';
+if(lower.includes('mediafire.com'))return'📁 MediaFire';
+if(lower.includes('dropbox.com'))return'📦 Dropbox';
+if(lower.includes('pastebin.com'))return'📝 Pastebin';
+if(lower.includes('github.com'))return'💻 GitHub';
+if(lower.includes('.zip')||lower.includes('.rar')||lower.includes('.7z'))return'🗜 File nén';
+if(lower.includes('.exe')||lower.includes('.apk')||lower.includes('.ipa'))return'📱 File cài đặt';
+if(lower.includes('.mp4')||lower.includes('.mp3')||lower.includes('.pdf'))return'🎬 File media';
+return'🔗 Link trực tiếp';
+}
+
+function showResult(msg,success,typeLabel){
+var rb=document.getElementById('resultBox'),ch=document.getElementById('copyHint'),btnOpen=document.getElementById('btnOpen');
 rb.className='result-box';
-if(success){rb.classList.add('success');rb.innerHTML='<span class="result-text">'+escapeHtml(msg)+'</span>';ch.classList.add('visible')}
-else{rb.classList.add('error');rb.innerHTML='<span style="color:#ff4444;font-size:14px">'+escapeHtml(msg)+'</span>';ch.classList.remove('visible')}
+if(success){
+rb.classList.add('success');
+rb.innerHTML='<span class="result-type">'+typeLabel+'</span><span class="result-text">'+escapeHtml(msg)+'</span>';
+ch.classList.add('visible');
+btnOpen.classList.add('show');
+}else{
+rb.classList.add('error');
+rb.innerHTML='<span style="color:#ff4444;font-size:14px">'+escapeHtml(msg)+'</span>';
+ch.classList.remove('visible');
+btnOpen.classList.remove('show');
 }
+}
+
 function copyResult(){
 if(currentResult&&currentResult.startsWith('http')){
 navigator.clipboard.writeText(currentResult).then(showToast).catch(function(){
-var ta=document.createElement('textarea');ta.value=currentResult;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast()
-})
+var ta=document.createElement('textarea');ta.value=currentResult;
+ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);
+ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast();
+});
 }
 }
-function showToast(){var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1500)}
-function clearInput(){
-document.getElementById('linkInput').value='';
-document.getElementById('resultBox').className='result-box';
-document.getElementById('resultBox').innerHTML='<span class="result-placeholder">Link gốc hoặc key sẽ hiện ở đây...</span>';
-document.getElementById('copyHint').classList.remove('visible');
-document.getElementById('logBox').innerHTML='';
-document.getElementById('logBox').classList.remove('active');
-currentResult='';
-document.getElementById('linkInput').focus();
+
+function openResult(){
+if(currentResult&&currentResult.startsWith('http')){window.open(currentResult,'_blank')}
 }
-function escapeHtml(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
-</script>
-</body>
-</html>
+
+function showToast(){var t=document.getElement
