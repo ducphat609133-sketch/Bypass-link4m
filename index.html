@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Bypass Tool - Devils Will Rise</title>
+<title>Link4m Bypass</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',sans-serif}
 .wrapper{width:90%;max-width:500px;text-align:center;padding:15px}
-.logo{font-family:'Courier New',monospace;font-size:26px;font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c;letter-spacing:3px;margin-bottom:3px}
+.logo{font-family:'Courier New',monospace;font-size:24px;font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c;letter-spacing:3px;margin-bottom:3px}
 .subtitle{color:#666;font-size:10px;margin-bottom:15px}
 .subtitle span{color:#ff003c}
 .card{background:#111;border:1px solid #222;border-radius:16px;padding:20px}
@@ -23,10 +23,10 @@ button.loading{opacity:0.6;pointer-events:none}
 .result-box.success{border-color:#00ff41;color:#00ff41}
 .result-box.warning{border-color:#ff6600;color:#ff6600}
 .result-box.error{border-color:#ff003c;color:#ff4444}
-.result-box .status-badge{display:inline-block;margin-top:5px;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:bold}
-.status-alive{background:#002200;color:#00ff41;border:1px solid #00ff41}
-.status-dead{background:#220000;color:#ff4444;border:1px solid #ff4444}
-.status-web{background:#221100;color:#ff6600;border:1px solid #ff6600}
+.s-badge{display:inline-block;margin-top:5px;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:bold}
+.s-ok{background:#002200;color:#00ff41;border:1px solid #00ff41}
+.s-web{background:#221100;color:#ff6600;border:1px solid #ff6600}
+.s-dead{background:#220000;color:#ff4444;border:1px solid #ff4444}
 .placeholder{color:#333;font-size:12px}
 .log-box{margin-top:10px;background:#0a0a0a;border-radius:8px;padding:10px;max-height:180px;overflow-y:auto;text-align:left;display:none}
 .log-box.show{display:block}
@@ -34,14 +34,11 @@ button.loading{opacity:0.6;pointer-events:none}
 .log-line.good{color:#00ff41}
 .log-line.bad{color:#ff4444}
 .log-line.info{color:#ffcc00}
-.log-line.warn{color:#ff6600}
-.log-line.link{color:#00ccff}
 .spinner{width:22px;height:22px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.7s linear infinite;margin:8px auto;display:none}
 .spinner.show{display:block}
 @keyframes spin{to{transform:rotate(360deg)}}
 .footer{margin-top:12px;color:#444;font-size:10px}
 .footer span{color:#ff003c;cursor:pointer}
-.footer span:hover{color:#fff}
 .toast{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:8px 20px;border-radius:20px;font-weight:bold;font-size:12px;z-index:999;display:none}
 .toast.show{display:block}
 </style>
@@ -67,267 +64,125 @@ button.loading{opacity:0.6;pointer-events:none}
 <span onclick="clearAll()">🗑 Clear</span> | <span>💀 @SGCodexs</span> | <span onclick="toggleLog()">📋 Log</span>
 </div>
 </div>
-
 <script>
 var finalLink='';
 var logVisible=true;
-
 document.getElementById('linkInput').addEventListener('keydown',function(e){if(e.key==='Enter')bypass()});
-
-function log(msg,type){
-var lb=document.getElementById('logBox');lb.classList.add('show');
-var cls=type||'';
-lb.innerHTML+='<div class="log-line '+cls+'">'+msg+'</div>';
-lb.scrollTop=lb.scrollHeight;
-}
+function log(msg,type){var lb=document.getElementById('logBox');lb.classList.add('show');lb.innerHTML+='<div class="log-line '+(type||'')+'">'+msg+'</div>';lb.scrollTop=lb.scrollHeight}
 function toggleLog(){logVisible=!logVisible;var lb=document.getElementById('logBox');if(logVisible)lb.classList.add('show');else lb.classList.remove('show')}
 function showLoading(s){var sp=document.getElementById('spinner');var b=document.getElementById('btnBypass');if(s){sp.classList.add('show');b.classList.add('loading');b.textContent='ĐANG XỬ LÝ...'}else{sp.classList.remove('show');b.classList.remove('loading');b.textContent='⚡ BYPASS'}}
 
-// ===== TẠO LINK /go/ TỪ LINK GỐC =====
-function generateGoLinks(url){
-var links=[];
-// Link4m có thể redirect qua /go/ hoặc /get/ hoặc /download/
-var patterns=['/go/','/get/','/download/','/link/','/out/','/redirect/','/dl/','/d/'];
-// Thay domain gốc bằng domain/go/key
-var u=url.replace('https://','').replace('http://','');
-var parts=u.split('/');
-var domain=parts[0];
-var key=parts[1]||'';
-if(key){
-for(var i=0;i<patterns.length;i++){
-links.push('https://'+domain+patterns[i]+key);
-links.push('http://'+domain+patterns[i]+key);
-}
-}
+function isLink4m(u){return u.indexOf('link4m.com')!==-1||u.indexOf('link4m.net')!==-1||u.indexOf('link4m.org')!==-1}
+function getDomain(u){return u.replace('https://','').replace('http://','').split('/')[0]}
+
+function generateRedirects(url){
+var links=[];var d=getDomain(url);var parts=url.replace('https://','').replace('http://','').split('/');var key=parts[1]||'';if(!key)return links;
+var paths=['/go/','/get/','/download/','/link/','/out/','/redirect/','/dl/','/d/'];
+for(var i=0;i<paths.length;i++){links.push('https://'+d+paths[i]+key)}
 return links;
 }
 
-// ===== FOLLOW REDIRECT =====
-async function followRedirect(url,depth){
-if(depth>5)return url;
-log('  🔄 Follow ['+depth+']: '+url.substring(0,70),'info');
+async function follow(u,depth){
+if(depth>8)return u;
+log('  🔄 ['+depth+'] '+u.substring(0,60),'info');
 try{
 var ctrl=new AbortController();var to=setTimeout(function(){ctrl.abort()},5000);
-var res=await fetch(url,{method:'HEAD',redirect:'follow',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}});
+var res=await fetch(u,{method:'HEAD',redirect:'follow',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}});
 clearTimeout(to);
-if(res.redirected&&res.url!==url){
-log('  ➡ Redirect: '+res.url.substring(0,70),'good');
-var shortDomains=['link4m','ouo.io','ouo.press','shrinkme','shortconnect','work.ink','adf.ly','adfoc.us','j.gs','q.gs','ay.gy','bit.ly','bitly.','tinyurl','shorturl','shorte.st','gestyy'];
-var isShort=false;
-for(var i=0;i<shortDomains.length;i++){if(res.url.indexOf(shortDomains[i])!==-1){isShort=true;break}}
-if(isShort)return await followRedirect(res.url,depth+1);
-return res.url;
-}
-return url;
-}catch(e){log('  ❌ Redirect lỗi: '+e.message.substring(0,30),'bad');return url}
+if(res.redirected&&res.url!==u){log('  ➡ '+res.url.substring(0,60),'good');if(isLink4m(res.url))return await follow(res.url,depth+1);return res.url}
+return u;
+}catch(e){log('  ❌ '+e.message.substring(0,30),'bad');return u}
 }
 
-// ===== EXTRACT LINK =====
-function extractAllLinks(html){
+function extractLinks(html){
 html=html.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\\\//g,'/');
 var found=[];
-
-var m1=html.match(/<meta[^>]*http-equiv\s*=\s*["']refresh["'][^>]*content\s*=\s*["']\d+\s*;\s*url\s*=\s*([^"'\s>]+)/i);
-if(m1&&m1[1])found.push(m1[1]);
-
-var m2=html.match(/window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']{5,})["']/gi);
-if(m2)for(var i=0;i<m2.length;i++){var t=m2[i].match(/["']([^"']+)["']/);if(t)found.push(t[1])}
-
-var m3=html.match(/location\.(?:replace|assign|href)\s*\(\s*["']([^"']{5,})["']\s*\)/gi);
-if(m3)for(var i=0;i<m3.length;i++){var t=m3[i].match(/["']([^"']+)["']/);if(t)found.push(t[1])}
-
-var m4=html.match(/window\.open\s*\(\s*["']([^"']{5,})["']/gi);
-if(m4)for(var i=0;i<m4.length;i++){var t=m4[i].match(/["']([^"']+)["']/);if(t)found.push(t[1])}
-
-var m5=html.match(/<a[^>]*href\s*=\s*["'](https?:\/\/[^"']+?)["'][^>]*>/gi);
-if(m5)for(var i=0;i<m5.length;i++){var t=m5[i].match(/href\s*=\s*["']([^"']+)["']/i);if(t)found.push(t[1])}
-
-var m6=html.match(/onclick\s*=\s*["'][^"']*(?:location|window\.open|href)\s*[=\(]\s*["']([^"']{5,})["']/gi);
-if(m6)for(var i=0;i<m6.length;i++){var t=m6[i].match(/["']([^"']{5,})["']$/);if(t)found.push(t[1])}
-
-var m7=html.match(/data-(?:url|link|href|redirect|target|dest|go|download|file|direct)\s*=\s*["'](https?:\/\/[^"']+)["']/gi);
-if(m7)for(var i=0;i<m7.length;i++){var t=m7[i].match(/["'](https?:\/\/[^"']+)["']/i);if(t)found.push(t[1])}
-
-var m8=html.match(/atob\s*\(\s*["']([A-Za-z0-9+/=]{20,})["']\s*\)/g);
-if(m8)for(var i=0;i<m8.length;i++){var t=m8[i].match(/["']([A-Za-z0-9+/=]{20,})["']/);if(t)try{var d=atob(t[1]);if(d.indexOf('http')===0)found.push(d)}catch(e){}}
-
-var m9=html.match(/(?:var|let|const)\s+\w+\s*=\s*["'](https?:\/\/[^\s"'<>]{15,}?)["']/gi);
-if(m9)for(var i=0;i<m9.length;i++){var t=m9[i].match(/["'](https?:\/\/[^"']+)["']/);if(t)found.push(t[1])}
-
-var m10=html.match(/["'](?:url|link|redirect|target|dest|download|file|get|go|direct|source|drive)["']\s*:\s*["'](https?:\/\/[^"']{8,}?)["']/gi);
-if(m10)for(var i=0;i<m10.length;i++){var t=m10[i].match(/["'](https?:\/\/[^"']+)["']/);if(t)found.push(t[1])}
-
-var scripts=[];var sr=/<script[^>]*>([\s\S]*?)<\/script>/gi;var sm;
-while((sm=sr.exec(html))!==null)scripts.push(sm[1]);
-for(var s=0;s<scripts.length;s++){
-var sc=scripts[s];
-var su=sc.match(/https?:\/\/[^\s"'`\[\]{}()\\]{10,}/gi);if(su)found=found.concat(su);
-var eu=sc.match(/https?:\\\/\\\/[^\s"'`\[\]{}()\\]{10,}/gi);if(eu)for(var e=0;e<eu.length;e++)found.push(eu[e].replace(/\\\//g,'/'));
-var tl=sc.match(/`(https?:\/\/[^`]{10,})`/gi);if(tl)for(var t=0;t<tl.length;t++)found.push(tl[t].replace(/`/g,''));
-}
-
-var allUrls=html.match(/https?:\/\/[^\s"'<>\[\]{}()\\]{10,}/gi);
-if(allUrls)found=found.concat(allUrls);
-
-var clean=[];
-for(var i=0;i<found.length;i++){
-var u=found[i];if(typeof u!=='string')continue;
-u=u.replace(/\\/g,'').trim().replace(/^["'`]+|["'`]+$/g,'');
-if(u.indexOf('//')===0)u='https:'+u;
-if(u.indexOf('http')===0&&u.length>15)clean.push(u);
-}
-
-var seen={};var unique=[];
-for(var i=0;i<clean.length;i++){if(!seen[clean[i]]){seen[clean[i]]=true;unique.push(clean[i])}}
-log('📊 Link unique ('+unique.length+'):','info');
-for(var i=0;i<unique.length;i++){log('  ['+i+'] '+unique[i].substring(0,90),'link');}
-
-// Ưu tiên 1: Link redirect nội bộ
-for(var i=0;i<unique.length;i++){
-if(unique[i].indexOf('/go/')!==-1||unique[i].indexOf('/redirect/')!==-1||unique[i].indexOf('/link/')!==-1||unique[i].indexOf('/out/')!==-1||unique[i].indexOf('/get/')!==-1||unique[i].indexOf('/download/')!==-1||unique[i].indexOf('/dl/')!==-1||unique[i].indexOf('/d/')!==-1){
-log('🎯 Link redirect nội bộ: '+unique[i].substring(0,60),'good');
-return unique[i];
-}
-}
-
-// Blacklist
-var bl=['challenges.cloudflare.com','cloudflare.com','google.com/recaptcha','googletagmanager','facebook.net','.js','.css','.png','.jpg','.jpeg','.svg','.ico','.gif','.woff','.ttf','analytics','gtag','ajax','yoads.net','favicon'];
-var filtered=[];
-for(var i=0;i<unique.length;i++){
-var u=unique[i];var l=u.toLowerCase();
-var bad=false;
-for(var j=0;j<bl.length;j++){if(l.indexOf(bl[j])!==-1){bad=true;break}}
-if(!bad)filtered.push(u);
-}
-log('🔍 Sau blacklist còn '+filtered.length+' link:','info');
-for(var i=0;i<filtered.length;i++){log('  ✅ '+filtered[i].substring(0,90),'good');}
-
-if(filtered.length===0)return null;
-
+var pat=[/<meta[^>]*http-equiv\s*=\s*["']refresh["'][^>]*content\s*=\s*["']\d+\s*;\s*url\s*=\s*([^"'\s>]+)/i,/window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']{5,})["']/gi,/location\.(?:replace|assign|href)\s*\(\s*["']([^"']{5,})["']\s*\)/gi,/window\.open\s*\(\s*["']([^"']{5,})["']/gi,/<a[^>]*href\s*=\s*["'](https?:\/\/[^"']+?)["'][^>]*>/gi,/onclick\s*=\s*["'][^"']*(?:location|window\.open|href)\s*[=\(]\s*["']([^"']{5,})["']/gi,/data-(?:url|link|href|redirect|target|dest|go|download|file|direct)\s*=\s*["'](https?:\/\/[^"']+)["']/gi,/atob\s*\(\s*["']([A-Za-z0-9+/=]{20,})["']\s*\)/g,/(?:var|let|const)\s+\w+\s*=\s*["'](https?:\/\/[^\s"'<>]{15,}?)["']/gi];
+for(var i=0;i<pat.length;i++){var p=pat[i];if(p.flags&&p.flags.indexOf('g')!==-1){var ms=html.matchAll(p);for(var m of ms){if(m[1])found.push(m[1])}}else{var mc=html.match(p);if(mc&&mc[1])found.push(mc[1])}}
+var scs=[];var sr=/<script[^>]*>([\s\S]*?)<\/script>/gi;var sm;while((sm=sr.exec(html))!==null)scs.push(sm[1]);
+for(var s=0;s<scs.length;s++){var sc=scs[s];var su=sc.match(/https?:\/\/[^\s"'`\[\]{}()\\]{10,}/gi);if(su)found=found.concat(su)}
+var au=html.match(/https?:\/\/[^\s"'<>\[\]{}()\\]{10,}/gi);if(au)found=found.concat(au);
+var cl=[];for(var i=0;i<found.length;i++){var u=found[i];if(typeof u!=='string')continue;u=u.replace(/\\/g,'').trim().replace(/^["'`]+|["'`]+$/g,'');if(u.indexOf('//')===0)u='https:'+u;if(u.indexOf('http')===0&&u.length>15)cl.push(u)}
+var seen={};var uniq=[];for(var i=0;i<cl.length;i++){if(!seen[cl[i]]){seen[cl[i]]=true;uniq.push(cl[i])}}
+log('📊 '+uniq.length+' link','info');
+for(var i=0;i<Math.min(uniq.length,10);i++)log('  ['+i+'] '+uniq[i].substring(0,80),'link');
+for(var i=0;i<uniq.length;i++){if(uniq[i].indexOf('/go/')!==-1||uniq[i].indexOf('/redirect/')!==-1||uniq[i].indexOf('/link/')!==-1||uniq[i].indexOf('/out/')!==-1||uniq[i].indexOf('/get/')!==-1||uniq[i].indexOf('/download/')!==-1||uniq[i].indexOf('/dl/')!==-1){log('🎯 Redirect nội bộ: '+uniq[i].substring(0,60),'good');return uniq[i]}}
+var bl=['cloudflare','google.com/recaptcha','googletagmanager','facebook.net','.js','.css','.png','.jpg','.jpeg','.svg','.ico','.gif','.woff','.ttf','analytics','gtag','ajax','yoads','favicon','static.'];
+var fl=[];for(var i=0;i<uniq.length;i++){var u=uniq[i];var l=u.toLowerCase();var bad=false;for(var j=0;j<bl.length;j++){if(l.indexOf(bl[j])!==-1){bad=true;break}}if(!bad)fl.push(u)}
+log('🔍 Sau lọc: '+fl.length,'info');for(var i=0;i<fl.length;i++)log('  ✅ '+fl[i].substring(0,80),'good');
+if(fl.length===0)return null;
 var prio=['drive.google.com','docs.google.com','mega.nz','mediafire.com','dropbox.com','pastebin.com','github.com','download','file','get','zip','rar','7z','exe','apk','pdf','mp4','mp3'];
-for(var i=0;i<prio.length;i++){for(var j=0;j<filtered.length;j++){if(filtered[j].toLowerCase().indexOf(prio[i])!==-1){log('⭐ '+prio[i],'good');return filtered[j];}}}
-
-var longest=filtered[0];
-for(var i=1;i<filtered.length;i++){if(filtered[i].length>longest.length)longest=filtered[i]}
-log('📏 Dài nhất: '+longest.length+' ký tự','info');
-return longest;
+for(var i=0;i<prio.length;i++){for(var j=0;j<fl.length;j++){if(fl[j].toLowerCase().indexOf(prio[i])!==-1){log('⭐ '+prio[i],'good');return fl[j]}}}
+var lo=fl[0];for(var i=1;i<fl.length;i++){if(fl[i].length>lo.length)lo=fl[i]}return lo;
 }
 
-async function checkLink(url){
-log('🔬 Kiểm tra: '+url.substring(0,60),'info');
-var r={alive:false,isFile:false,fileName:'',fileSize:'',httpCode:0};
+async function checkLink(u){
+log('🔬 Kiểm tra...','info');
+var r={alive:false,isFile:false,fn:'',fs:'',code:0};
 try{
 var ctrl=new AbortController();var to=setTimeout(function(){ctrl.abort()},6000);
-var res=await fetch(url,{method:'HEAD',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0'}});
-clearTimeout(to);
-r.httpCode=res.status;var ct=res.headers.get('content-type')||'';var cl=res.headers.get('content-length')||'';
-var disp=res.headers.get('content-disposition')||'';r.fileSize=cl;
-
-if(res.status===200||res.status===302||res.status===301){r.alive=true;log('✅ HTTP '+res.status,'good')}
-else if(res.status===404){log('❌ 404','bad')}
-else log('⚠ HTTP '+res.status,'warn');
-
+var res=await fetch(u,{method:'HEAD',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0'}});
+clearTimeout(to);r.code=res.status;var ct=res.headers.get('content-type')||'';var cl=res.headers.get('content-length')||'';var disp=res.headers.get('content-disposition')||'';r.fs=cl;
+if(res.status===200||res.status===302||res.status===301){r.alive=true;log('✅ HTTP '+res.status,'good')}else if(res.status===404)log('❌ 404','bad');else log('⚠ '+res.status,'warn');
 var ctl=ct.toLowerCase();
-if(ctl.indexOf('zip')!==-1||ctl.indexOf('rar')!==-1||ctl.indexOf('7z')!==-1||ctl.indexOf('octet-stream')!==-1||ctl.indexOf('exe')!==-1||ctl.indexOf('apk')!==-1||ctl.indexOf('pdf')!==-1||ctl.indexOf('mp4')!==-1||ctl.indexOf('mpeg')!==-1||ctl.indexOf('android')!==-1){r.isFile=true;var fn=url.split('/').pop().split('?')[0];r.fileName=fn&&fn.indexOf('.')!==-1?fn:'file';log('📁 FILE: '+r.fileName+' ('+formatSize(cl)+')','good')}
-else if(disp.indexOf('attachment')!==-1){r.isFile=true;var fm=disp.match(/filename[^;=\n]*=["']?([^"';\n]+)["']?/i);if(fm)r.fileName=fm[1];log('📥 File: '+r.fileName,'good')}
+if(ctl.indexOf('zip')!==-1||ctl.indexOf('rar')!==-1||ctl.indexOf('7z')!==-1||ctl.indexOf('octet-stream')!==-1||ctl.indexOf('exe')!==-1||ctl.indexOf('apk')!==-1||ctl.indexOf('pdf')!==-1||ctl.indexOf('mp4')!==-1||ctl.indexOf('mpeg')!==-1||ctl.indexOf('android')!==-1){r.isFile=true;var fn=u.split('/').pop().split('?')[0];r.fn=fn&&fn.indexOf('.')!==-1?fn:'file';log('📁 FILE: '+r.fn+' ('+fmt(cl)+')','good')}
+else if(disp.indexOf('attachment')!==-1){r.isFile=true;var fm=disp.match(/filename[^;=\n]*=["']?([^"';\n]+)["']?/i);if(fm)r.fn=fm[1];log('📥 File: '+r.fn,'good')}
 else if(ctl.indexOf('html')!==-1)log('🌐 Web','info');
 }catch(e){log('❌ '+e.message.substring(0,30),'bad')}
-
-if(!r.isFile){var lower=url.toLowerCase();var exts=['.zip','.rar','.7z','.exe','.apk','.ipa','.pdf','.mp4','.mp3','.mkv','.avi','.dmg','.iso','.tar','.gz'];for(var i=0;i<exts.length;i++){if(lower.indexOf(exts[i])!==-1){r.isFile=true;r.fileName=url.split('/').pop().split('?')[0];log('📁 Đuôi: '+exts[i],'good');break}}}
+if(!r.isFile){var lo=u.toLowerCase();var ex=['.zip','.rar','.7z','.exe','.apk','.ipa','.pdf','.mp4','.mp3','.mkv','.avi','.dmg','.iso','.tar','.gz'];for(var i=0;i<ex.length;i++){if(lo.indexOf(ex[i])!==-1){r.isFile=true;r.fn=u.split('/').pop().split('?')[0];log('📁 Đuôi: '+ex[i],'good');break}}}
 return r;
 }
-function formatSize(b){if(!b||b==='0')return'?';var n=parseInt(b);if(isNaN(n))return b;if(n<1024)return n+' B';if(n<1048576)return(n/1024).toFixed(1)+' KB';if(n<1073741824)return(n/1048576).toFixed(1)+' MB';return(n/1073741824).toFixed(2)+' GB';}
+function fmt(b){if(!b||b==='0')return'?';var n=parseInt(b);if(isNaN(n))return b;if(n<1024)return n+' B';if(n<1048576)return(n/1024).toFixed(1)+' KB';if(n<1073741824)return(n/1048576).toFixed(1)+' MB';return(n/1073741824).toFixed(2)+' GB'}
 
-// ===== BYPASS CHÍNH =====
 async function bypass(){
-var input=document.getElementById('linkInput');var url=input.value.trim();
-var logBox=document.getElementById('logBox');var btnOpen=document.getElementById('btnOpen');
-logBox.innerHTML='';btnOpen.style.display='none';finalLink='';
-if(!url){showResult('⚠ Vui lòng nhập link!','error');return}
+var input=document.getElementById('linkInput');var url=input.value.trim();var lb=document.getElementById('logBox');var bo=document.getElementById('btnOpen');
+lb.innerHTML='';bo.style.display='none';finalLink='';
+if(!url){showR('⚠ Vui lòng nhập link!','error');return}
+log('🔍 Bắt đầu bypass...','info');log('📎 '+url,'info');showLoading(true);showR('Đang xử lý...','info');
+var R=null;
 
-// Hỗ trợ link4m.org
-if(url.indexOf('link4m.org')!==-1){
-log('🔍 Phát hiện link4m.org','info');
-}
+// M1: bypass.pm
+log('📡 M1: Bypass.pm','info');
+try{var r1=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});if(r1.ok){var d=await r1.json();if(d.destination){R=d.destination;log('✅ OK','good')}else if(d.url){R=d.url;log('✅ OK','good')}}}catch(e){log('❌ '+e.message,'bad')}
 
-log('🔍 Bắt đầu bypass...','info');log('📎 '+url,'info');
-showLoading(true);showResult('Đang xử lý...','info');
-var result=null;
+// M2: Jina
+if(!R){log('📡 M2: Jina AI','info');
+try{var r2=await fetch('https://r.jina.ai/https://'+url.replace('https://','').replace('http://',''),{headers:{'Accept':'text/markdown'}});
+if(r2.ok){var t=await r2.text();log('✅ '+t.length+' ký tự','good');
+if(t.indexOf('turnstile')!==-1||t.indexOf('cloudflare')!==-1)log('⚠ Cloudflare','warn');
+else{var ex=extractLinks(t);if(ex){R=ex;log('🎯 OK','good')}}}
+}catch(e){log('❌ '+e.message,'bad')}}
 
-// Method 1: Bypass.pm API
-log('📡 Method 1: Bypass.pm API','info');
-try{
-var res1=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
-if(res1.ok){var d=await res1.json();if(d.destination){result=d.destination;log('✅ Bypass.pm OK','good')}else if(d.url){result=d.url;log('✅ Bypass.pm OK','good')}}else log('❌ HTTP '+res1.status,'bad')
-}catch(e){log('❌ '+e.message,'bad')}
+// M3: Proxy
+if(!R){log('📡 M3: Proxy','info');
+var pl=['https://api.allorigins.win/raw?url=','https://corsproxy.io/?','https://api.codetabs.com/v1/proxy?quest='];
+for(var p=0;p<pl.length;p++){if(R)break;
+try{var pu=pl[p]+encodeURIComponent(url);log('  #'+(p+1)+'...');
+var r3=await fetch(pu,{headers:{'User-Agent':'Mozilla/5.0'}});
+if(r3.ok){var h=await r3.text();log('  ✅ '+h.length+' ký tự','good');
+if(h.indexOf('challenges.cloudflare.com')!==-1||h.indexOf('turnstile')!==-1){log('  ⚠ CF','warn');continue}
+var ex=extractLinks(h);if(ex){R=ex;log('  🎯 OK','good');break}}
+}catch(e){log('  ❌ '+e.message,'bad')}}}
 
-// Method 2: Jina AI
-if(!result){
-log('📡 Method 2: Jina AI','info');
-try{
-var jinaUrl='https://r.jina.ai/https://'+url.replace('https://','').replace('http://','');
-var res2=await fetch(jinaUrl,{headers:{'Accept':'text/markdown'}});
-if(res2.ok){var text=await res2.text();log('✅ Jina OK - '+text.length+' ký tự','good');
-if(text.indexOf('turnstile')!==-1||text.indexOf('cloudflare')!==-1)log('⚠ Cloudflare','warn');
-else{var ext=extractAllLinks(text);if(ext){result=ext;log('🎯 Tìm thấy!','good')}}
-}else log('❌ HTTP '+res2.status,'bad')
-}catch(e){log('❌ '+e.message,'bad')}
-}
-
-// Method 3: Proxy fetch
-if(!result){
-log('📡 Method 3: Proxy fetch','info');
-var proxies=['https://api.allorigins.win/raw?url=','https://corsproxy.io/?','https://api.codetabs.com/v1/proxy?quest=','https://cors-anywhere.herokuapp.com/'];
-for(var p=0;p<proxies.length;p++){
-if(result)break;
-try{var proxyUrl=proxies[p]+encodeURIComponent(url);log('  Thử proxy #'+(p+1)+'...');
-var res3=await fetch(proxyUrl,{headers:{'User-Agent':'Mozilla/5.0'}});
-if(res3.ok){var html=await res3.text();log('  ✅ Proxy #'+(p+1)+' OK - '+html.length+' ký tự','good');
-if(html.indexOf('challenges.cloudflare.com')!==-1||html.indexOf('turnstile')!==-1){log('  ⚠ Cloudflare','warn');continue}
-var ext=extractAllLinks(html);if(ext){result=ext;log('  🎯 TÌM THẤY!','good');break}
-}else log('  ❌ HTTP '+res3.status,'bad')}catch(e){log('  ❌ '+e.message,'bad')}
-}
-}
-
-// Method 4: TỰ TẠO LINK /go/ VÀ FOLLOW
-if(!result){
-log('📡 Method 4: Tạo link /go/ và follow...','info');
-var goLinks=generateGoLinks(url);
-for(var g=0;g<goLinks.length;g++){
-log('  Thử: '+goLinks[g].substring(0,60));
-try{
-var followed=await followRedirect(goLinks[g],0);
-if(followed!==goLinks[g]&&followed.indexOf('link4m')===-1){
-result=followed;
-log('  🎯 Follow thành công!','good');
-break;
-}
-}catch(e){}
-}
+// M4: Follow redirects
+if(!R&&isLink4m(url)){log('📡 M4: Follow redirects...','info');
+var redirs=generateRedirects(url);log('  🔗 '+redirs.length+' link để thử','info');
+for(var i=0;i<redirs.length;i++){if(R)break;
+log('  Thử: '+redirs[i].substring(0,60));
+try{var fw=await follow(redirs[i],0);if(fw!==redirs[i]&&!isLink4m(fw)){R=fw;log('  🎯 Follow OK!','good');break}else log('  ⚠ Vẫn Link4m','warn')}catch(e){log('  ❌ '+e.message,'bad')}}
 }
 
 showLoading(false);
-
-if(result){
-result=result.replace(/\\/g,'').replace(/&amp;/g,'&').trim();
-if(result.indexOf('http')!==0)result='https://'+result.replace(/^\/+/,'');
-finalLink=result;
-
-log('🔬 Đang kiểm tra...','info');
-var ck=await checkLink(result);
-var statusHTML='';
-if(ck.alive&&ck.isFile){statusHTML='<span class="status-badge status-alive">✅ FILE: '+ck.fileName+' ('+formatSize(ck.fileSize)+')</span>';showResultBox(result,'success',statusHTML);log('🏆 FILE!','good');btnOpen.style.display='block'}
-else if(ck.alive&&!ck.isFile){statusHTML='<span class="status-badge status-web">⚠ LINK SỐNG - TRANG WEB</span>';showResultBox(result,'warning',statusHTML);log('⚠ Web','warn');btnOpen.style.display='block'}
-else if(!ck.alive&&ck.httpCode===404){statusHTML='<span class="status-badge status-dead">❌ 404 - LINK CHẾT, HÃY THỬ FILE KHÁC</span>';showResultBox(result,'error',statusHTML);log('💀 404','bad')}
-else{statusHTML='<span class="status-badge status-dead">❌ KHÔNG TRUY CẬP ĐƯỢC</span>';showResultBox(result,'error',statusHTML);log('💀 Lỗi','bad')}
-}else{
-showResult('❌ KHÔNG BYPASS ĐƯỢC - Thử link khác!','error');
-log('💀 THẤT BẠI','bad');
+if(R){R=R.replace(/\\/g,'').replace(/&amp;/g,'&').trim();if(R.indexOf('http')!==0)R='https://'+R.replace(/^\/+/,'');finalLink=R;
+var ck=await checkLink(R);var bd='';
+if(ck.alive&&ck.isFile){bd='<span class="s-badge s-ok">✅ FILE: '+ck.fn+' ('+fmt(ck.fs)+')</span>';showRB(R,'success',bd);log('🏆 FILE!','good');bo.style.display='block'}
+else if(ck.alive&&!ck.isFile){bd='<span class="s-badge s-web">⚠ TRANG WEB</span>';showRB(R,'warning',bd);log('⚠ Web','warn');bo.style.display='block'}
+else if(!ck.alive&&ck.code===404){bd='<span class="s-badge s-dead">❌ 404 - HÃY THỬ FILE KHÁC</span>';showRB(R,'error',bd);log('💀 404','bad')}
+else{bd='<span class="s-badge s-dead">❌ KHÔNG TRUY CẬP ĐƯỢC</span>';showRB(R,'error',bd);log('💀 Lỗi','bad')}
+}else{showR('❌ KHÔNG BYPASS ĐƯỢC!','error');log('💀 THẤT BẠI','bad')}
 }
-}
-
-function showResultBox(link,type,statusHTML){var rb=document.getElementById('resultBox');rb.className='result-box';if(type==='success')rb.classList.add('success');else if(type==='warning')rb.classList.add('warning');else rb.classList.add('error');rb.innerHTML='<div>'+link+'</div>'+statusHTML}
-function showResult(msg,type){var rb=document.getElementById('resultBox');rb.className='result-box';if(type==='success')rb.classList.add('success');else if(type==='error')rb.classList.add('error');rb.innerHTML=msg}
+function showRB(l,t,b){var rb=document.getElementById('resultBox');rb.className='result-box';if(t==='success')rb.classList.add('success');else if(t==='warning')rb.classList.add('warning');else rb.classList.add('error');rb.innerHTML='<div>'+l+'</div>'+b}
+function showR(m,t){var rb=document.getElementById('resultBox');rb.className='result-box';if(t==='success')rb.classList.add('success');else if(t==='error')rb.classList.add('error');rb.innerHTML=m}
 function copyLink(){if(finalLink&&finalLink.indexOf('http')===0){navigator.clipboard.writeText(finalLink).then(function(){var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1500)}).catch(function(){var ta=document.createElement('textarea');ta.value=finalLink;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1500)})}}
 function openLink(){if(finalLink&&finalLink.indexOf('http')===0)window.open(finalLink,'_blank')}
 function clearAll(){document.getElementById('linkInput').value='';document.getElementById('resultBox').className='result-box';document.getElementById('resultBox').innerHTML='<span class="placeholder">Link gốc sẽ hiện ở đây...</span>';document.getElementById('logBox').innerHTML='';document.getElementById('btnOpen').style.display='none';finalLink='';document.getElementById('linkInput').focus()}
