@@ -5,182 +5,806 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Link4m Bypass - Devils Will Rise</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',sans-serif}
-.wrapper{width:90%;max-width:500px;text-align:center;padding:15px}
-.logo{font-family:'Courier New',monospace;font-size:24px;font-weight:bold;color:#ff003c;text-shadow:0 0 20px #ff003c;letter-spacing:3px;margin-bottom:3px}
-.subtitle{color:#666;font-size:10px;margin-bottom:12px}
-.subtitle span{color:#ff003c}
-.card{background:#111;border:1px solid #222;border-radius:16px;padding:18px}
-input{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:14px;outline:none;margin-bottom:10px;text-align:center}
-input:focus{border-color:#ff003c}
-.btn-row{display:flex;gap:8px}
-.btn-row button{flex:1;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:2px}
-.btn-row .btn-sm{flex:0;width:50px;background:#222;color:#ff003c;border:1px solid #ff003c;font-size:16px}
-button:active{transform:scale(0.97)}
-button.loading{opacity:0.6}
-.result-box{margin-top:14px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:16px;min-height:50px;word-break:break-all;cursor:pointer;font-family:'Courier New',monospace;font-size:13px}
-.result-box.success{border-color:#00ff41;color:#00ff41}
-.result-box.error{border-color:#ff003c;color:#ff4444}
-.s-badge{display:inline-block;margin-top:5px;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:bold}
-.s-ok{background:#002200;color:#00ff41;border:1px solid #00ff41}
-.s-dead{background:#220000;color:#ff4444;border:1px solid #ff4444}
-.placeholder{color:#333;font-size:12px}
-.iframe-box{width:100%;height:350px;border:2px solid #333;border-radius:12px;overflow:hidden;margin-top:10px;display:none;position:relative}
-.iframe-box.show{display:block}
-.iframe-box iframe{width:100%;height:100%;border:none}
-.iframe-bar{background:#1a1a1a;padding:6px 10px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#888}
-.iframe-bar button{width:auto;padding:4px 10px;font-size:10px;border-radius:8px;background:#333;color:#fff;border:1px solid #555;letter-spacing:0}
-.iframe-bar .url-display{color:#ffcc00;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px}
-.log-box{margin-top:10px;background:#0a0a0a;border-radius:8px;padding:10px;max-height:120px;overflow-y:auto;text-align:left;display:none}
-.log-box.show{display:block}
-.log-line{color:#555;font-size:9px;font-family:'Courier New',monospace;padding:2px 0}
-.log-line.good{color:#00ff41}
-.log-line.bad{color:#ff4444}
-.log-line.info{color:#ffcc00}
-.footer{margin-top:12px;color:#444;font-size:10px}
-.footer span{color:#ff003c;cursor:pointer}
-.toast{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:8px 20px;border-radius:20px;font-weight:bold;font-size:12px;z-index:999;display:none}
-.toast.show{display:block}
+:root {
+  --bg: #0a0a0a;
+  --card: #111;
+  --border: #222;
+  --red: #ff003c;
+  --green: #00ff41;
+  --yellow: #ffcc00;
+  --orange: #ff6600;
+  --text: #fff;
+  --muted: #666;
+  --input-bg: #1a1a1a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  padding: 15px;
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+/* LOGO */
+.logo {
+  font-family: 'Courier New', monospace;
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--red);
+  text-shadow: 0 0 20px var(--red), 0 0 40px var(--red);
+  letter-spacing: 3px;
+  animation: flicker 3s infinite alternate;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 10px;
+  margin: 5px 0 18px;
+  letter-spacing: 2px;
+}
+
+.subtitle span {
+  color: var(--red);
+}
+
+/* VARIANT TAGS */
+.variants {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+
+.variant-tag {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 3px 9px;
+  font-size: 9px;
+  color: #888;
+  pointer-events: none;
+}
+
+.variant-tag.active {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
+
+/* CARD */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+/* INPUT */
+.input-wrap {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.input-wrap input {
+  width: 100%;
+  padding: 13px 40px 13px 15px;
+  background: var(--input-bg);
+  border: 2px solid #333;
+  border-radius: 25px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.input-wrap input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 15px rgba(255, 0, 60, 0.15);
+}
+
+.input-wrap input::placeholder {
+  color: #555;
+  font-size: 12px;
+}
+
+.input-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+/* BUTTONS */
+.btn-row {
+  display: flex;
+  gap: 7px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: var(--red);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 20px rgba(255, 0, 60, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.btn-outline {
+  background: #222;
+  color: var(--red);
+  border: 1px solid var(--red);
+  flex: 0;
+  width: 44px;
+  font-size: 16px;
+  display: none;
+}
+
+.btn-outline.show {
+  display: block;
+}
+
+.btn-sm {
+  background: #222;
+  color: var(--yellow);
+  border: 1px solid #333;
+  font-size: 11px;
+  padding: 10px;
+  letter-spacing: 0;
+}
+
+/* RESULT */
+.result {
+  margin-top: 12px;
+  background: #0d0d0d;
+  border: 2px solid #222;
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 45px;
+  word-break: break-all;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: left;
+  transition: all 0.3s;
+}
+
+.result.success {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.result.error {
+  border-color: var(--red);
+  color: #ff4444;
+}
+
+.result.info {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 3px 9px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.badge-ok {
+  background: #002200;
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+
+.badge-no {
+  background: #220000;
+  color: #ff4444;
+  border: 1px solid #ff4444;
+}
+
+.badge-web {
+  background: #221100;
+  color: var(--orange);
+  border: 1px solid var(--orange);
+}
+
+.placeholder {
+  color: #333;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* SPINNER */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #333;
+  border-top: 3px solid var(--red);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 8px auto;
+  display: none;
+}
+
+.spinner.show {
+  display: block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* FOOTER */
+.footer {
+  margin-top: 12px;
+  color: #444;
+  font-size: 10px;
+}
+
+.footer span {
+  color: var(--red);
+  cursor: pointer;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--green);
+  color: #000;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 12px;
+  z-index: 999;
+  display: none;
+}
+
+.toast.show {
+  display: block;
+}
+
+/* LOG */
+.log-box {
+  margin-top: 8px;
+  background: #0a0a0a;
+  border-radius: 8px;
+  padding: 8px;
+  max-height: 120px;
+  overflow-y: auto;
+  text-align: left;
+  display: none;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+}
+
+.log-box.show {
+  display: block;
+}
+
+.log-line {
+  padding: 2px 0;
+  color: #555;
+}
+
+.log-line.g { color: var(--green); }
+.log-line.r { color: #ff4444; }
+.log-line.y { color: var(--yellow); }
+.log-line.o { color: var(--orange); }
 </style>
 </head>
 <body>
+
 <div class="toast" id="toast">✅ Đã copy!</div>
-<div class="wrapper">
-<div class="logo">DEVILS WILL RISE</div>
-<div class="subtitle">Owner <span>@DP</span> | <span>@SGCodexs</span></div>
-<div class="card">
-<input type="text" id="linkInput" placeholder="Dán link Link4m vào đây..." autocomplete="off" autofocus>
-<div class="btn-row">
-<button id="btnBypass" onclick="openFrame()">🔓 MỞ LINK4M</button>
-<button class="btn-sm" id="btnCopy" onclick="copyLink()" style="display:none">📋</button>
-</div>
-<div class="result-box" id="resultBox" onclick="copyLink()">
-<span class="placeholder">Bấm MỞ LINK4M → Vượt Cloudflare → Link đích sẽ hiện ở đây</span>
-</div>
-<div class="iframe-box" id="iframeBox">
-<div class="iframe-bar">
-<span class="url-display" id="frameUrl">Đang load...</span>
-<button onclick="closeFrame()">✕ Đóng</button>
-</div>
-<iframe id="hiddenFrame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation allow-popups-to-escape-sandbox"></iframe>
-</div>
-<div class="log-box" id="logBox"></div>
-</div>
-<div class="footer">
-<span onclick="clearAll()">🗑 Clear</span> | <span>💀 @SGCodexs</span> | <span onclick="toggleLog()">📋 Log</span>
-</div>
+
+<div class="container">
+  <div class="logo">LINK4M BYPASS</div>
+  <div class="subtitle">Owner <span>@DP</span> | <span>@SGCodexs</span></div>
+
+  <div class="variants" id="variants">
+    <span class="variant-tag">.com</span>
+    <span class="variant-tag">.net</span>
+    <span class="variant-tag">.org</span>
+    <span class="variant-tag">.app</span>
+    <span class="variant-tag">.xyz</span>
+    <span class="variant-tag">.me</span>
+    <span class="variant-tag">.info</span>
+  </div>
+
+  <div class="card">
+    <div class="input-wrap">
+      <input type="text" id="linkInput" placeholder="Dán link Link4m vào đây..." autocomplete="off" autofocus>
+      <span class="input-icon">🔗</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnBypass" onclick="doBypass()">⚡ BYPASS</button>
+      <button class="btn btn-outline" id="btnOpen" onclick="openLink()">↗</button>
+    </div>
+
+    <div class="spinner" id="spinner"></div>
+
+    <div class="result" id="resultBox" onclick="copyLink()">
+      <span class="placeholder">Kết quả bypass sẽ hiện ở đây...</span>
+    </div>
+
+    <div class="log-box" id="logBox"></div>
+  </div>
+
+  <div class="footer">
+    <span onclick="clearAll()">🗑 Clear</span> | 
+    <span onclick="toggleLog()">📋 Log</span> | 
+    <span>💀 @SGCodexs</span>
+  </div>
 </div>
 
 <script>
-var finalLink='';
-var logVisible=true;
-var pollInterval=null;
+// ===== BIẾN =====
+var finalLink = '';
+var logVisible = false;
 
-document.getElementById('linkInput').addEventListener('keydown',function(e){if(e.key==='Enter')openFrame()});
+// ===== LINK4M PATTERNS =====
+var link4mDomains = [
+  'link4m.com', 'link4m.net', 'link4m.org',
+  'link4m.app', 'link4m.xyz', 'link4m.me', 'link4m.info',
+  'link4m.co', 'link4m.vip', 'link4m.pro', 'link4m.top'
+];
 
-function log(msg,type){var lb=document.getElementById('logBox');lb.classList.add('show');lb.innerHTML+='<div class="log-line '+(type||'')+'">'+msg+'</div>';lb.scrollTop=lb.scrollHeight}
-function toggleLog(){logVisible=!logVisible;var lb=document.getElementById('logBox');if(logVisible)lb.classList.add('show');else lb.classList.remove('show')}
+var redirectPaths = [
+  '/go/', '/direct/', '/get/', '/link/', '/out/',
+  '/redirect/', '/download/', '/dl/', '/d/', '/file/',
+  '/skip/', '/unlock/', '/proceed/'
+];
 
-function openFrame(){
-var input=document.getElementById('linkInput');var url=input.value.trim();
-var frame=document.getElementById('hiddenFrame');
-var frameBox=document.getElementById('iframeBox');
-var frameUrl=document.getElementById('frameUrl');
-var resultBox=document.getElementById('resultBox');
-var btnCopy=document.getElementById('btnCopy');
-var logBox=document.getElementById('logBox');
-
-logBox.innerHTML='';btnCopy.style.display='none';finalLink='';
-resultBox.className='result-box';
-resultBox.innerHTML='<span class="placeholder">Đang mở Link4m trong browser ẩn...</span>';
-
-if(!url){resultBox.className='result-box error';resultBox.innerHTML='⚠ Nhập link đi!';return}
-if(url.indexOf('link4m')===-1){resultBox.className='result-box error';resultBox.innerHTML='⚠ Không phải link Link4m!';return}
-
-log('🔓 Đang mở: '+url.substring(0,50)+'...','info');
-log('💡 Browser ẩn sẽ load Link4m thật, vượt Cloudflare','info');
-log('⏳ Chờ trang load và redirect...','info');
-
-frameBox.classList.add('show');
-frameUrl.textContent='Đang load...';
-frame.src=url;
-
-// Clear poll cũ
-if(pollInterval)clearInterval(pollInterval);
-
-// Poll URL của iframe mỗi 1 giây
-pollInterval=setInterval(function(){
-try{
-var currentUrl=frame.contentWindow.location.href;
-frameUrl.textContent=currentUrl;
-
-// Kiểm tra nếu đã redirect ra khỏi link4m
-if(currentUrl.indexOf('link4m')===-1&&currentUrl.indexOf('cloudflare')===-1&&currentUrl.indexOf('about:blank')===-1&&currentUrl.indexOf('javascript:')===-1){
-finalLink=currentUrl;
-resultBox.className='result-box success';
-resultBox.innerHTML='<div>✅ '+currentUrl+'</div><span class="s-badge s-ok">✅ LINK ĐÍCH - CLICK ĐỂ COPY</span>';
-btnCopy.style.display='block';
-log('🎯 BYPASS THÀNH CÔNG!','good');
-log('🔗 '+currentUrl,'info');
-clearInterval(pollInterval);
-}
-}catch(e){
-// Cross-origin - không đọc được URL
-frameUrl.textContent='(đang load - bấm Tôi là người nếu có)';
-}
-},1000);
-
-// Timeout sau 60 giây
-setTimeout(function(){
-if(!finalLink){
-log('⏰ Hết thời gian chờ. Nếu thấy link đích trong browser ẩn, copy thủ công nhé.','warn');
-clearInterval(pollInterval);
-}
-},60000);
-}
-
-function closeFrame(){
-document.getElementById('iframeBox').classList.remove('show');
-document.getElementById('hiddenFrame').src='';
-if(pollInterval)clearInterval(pollInterval);
-}
-
-function copyLink(){
-var link=finalLink;
-// Thử lấy từ iframe nếu chưa có
-if(!link){
-try{
-link=document.getElementById('hiddenFrame').contentWindow.location.href;
-if(link.indexOf('link4m')!==-1||link.indexOf('about:blank')!==-1)link=null;
-}catch(e){}
-}
-if(link&&link.indexOf('http')===0){
-navigator.clipboard.writeText(link).then(function(){
-var t=document.getElementById('toast');t.classList.add('show');
-setTimeout(function(){t.classList.remove('show')},1500);
-}).catch(function(){
-var ta=document.createElement('textarea');ta.value=link;
-ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);
-ta.select();document.execCommand('copy');document.body.removeChild(ta);
-var t=document.getElementById('toast');t.classList.add('show');
-setTimeout(function(){t.classList.remove('show')},1500);
+// ===== EVENT LISTENERS =====
+document.getElementById('linkInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doBypass();
 });
-}
+
+// ===== LOG =====
+function log(msg, type) {
+  var lb = document.getElementById('logBox');
+  lb.classList.add('show');
+  var cls = type === 'g' ? 'g' : (type === 'r' ? 'r' : (type === 'y' ? 'y' : 'o'));
+  lb.innerHTML += '<div class="log-line ' + cls + '">' + msg + '</div>';
+  lb.scrollTop = lb.scrollHeight;
 }
 
-function clearAll(){
-document.getElementById('linkInput').value='';
-document.getElementById('resultBox').className='result-box';
-document.getElementById('resultBox').innerHTML='<span class="placeholder">Bấm MỞ LINK4M → Vượt Cloudflare → Link đích sẽ hiện ở đây</span>';
-document.getElementById('logBox').innerHTML='';
-document.getElementById('btnCopy').style.display='none';
-document.getElementById('iframeBox').classList.remove('show');
-document.getElementById('hiddenFrame').src='';
-finalLink='';
-if(pollInterval)clearInterval(pollInterval);
-document.getElementById('linkInput').focus();
+function toggleLog() {
+  logVisible = !logVisible;
+  var lb = document.getElementById('logBox');
+  if (logVisible) lb.classList.add('show');
+  else lb.classList.remove('show');
 }
-</script>
-</body>
-</html>
+
+// ===== NHẬN DIỆN LINK4M =====
+function isLink4m(url) {
+  var lower = url.toLowerCase();
+  for (var i = 0; i < link4mDomains.length; i++) {
+    if (lower.indexOf(link4mDomains[i]) !== -1) return true;
+  }
+  return false;
+}
+
+function getLink4mDomain(url) {
+  var lower = url.toLowerCase();
+  for (var i = 0; i < link4mDomains.length; i++) {
+    if (lower.indexOf(link4mDomains[i]) !== -1) return link4mDomains[i];
+  }
+  return '';
+}
+
+function getDomain(url) {
+  return url.replace('https://', '').replace('http://', '').split('/')[0];
+}
+
+// ===== TẠO TẤT CẢ LINK REDIRECT =====
+function generateRedirects(url) {
+  var links = [];
+  var domain = getDomain(url);
+  var parts = url.replace('https://', '').replace('http://', '').split('/');
+  var key = parts[1] || '';
+  if (!key) return links;
+
+  for (var i = 0; i < redirectPaths.length; i++) {
+    links.push('https://' + domain + redirectPaths[i] + key);
+  }
+  // Thêm link gốc vào đầu
+  links.unshift(url);
+  return links;
+}
+
+// ===== EXTRACT LINK TỪ HTML =====
+function extractLinks(html) {
+  html = html.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\\\//g, '/');
+
+  var found = [];
+
+  var patterns = [
+    /<meta[^>]*http-equiv=["']refresh["'][^>]*content=["']\d+;\s*url=([^"'\s>]+)/i,
+    /window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']{5,})["']/gi,
+    /location\.(?:replace|assign|href)\s*\(\s*["']([^"']{5,})["']\s*\)/gi,
+    /window\.open\s*\(\s*["']([^"']{5,})["']/gi,
+    /<a[^>]*href\s*=\s*["'](https?:\/\/[^"']+?)["'][^>]*>/gi,
+    /<a[^>]*href\s*=\s*["'](\/[^"']*\/[^"']{3,})["'][^>]*>/gi,
+    /data-(?:url|link|href|redirect|target|dest|go|download|file|direct)\s*=\s*["'](https?:\/\/[^"']+)["']/gi,
+    /atob\s*\(\s*["']([A-Za-z0-9+/=]{20,})["']\s*\)/g,
+    /(?:var|let|const)\s+\w+\s*=\s*["'](https?:\/\/[^\s"'<>]{15,}?)["']/gi,
+    /["'](?:url|link|redirect|target|dest|download|file|get|go|direct|source|drive)["']\s*:\s*["'](https?:\/\/[^"']{8,}?)["']/gi
+  ];
+
+  for (var i = 0; i < patterns.length; i++) {
+    var p = patterns[i];
+    if (p.flags && p.flags.indexOf('g') !== -1) {
+      var ms = html.matchAll(p);
+      for (var m of ms) { if (m[1]) found.push(m[1]); }
+    } else {
+      var mc = html.match(p);
+      if (mc && mc[1]) found.push(mc[1]);
+    }
+  }
+
+  // Scripts
+  var scs = [];
+  var sr = /<script[^>]*>([\s\S]*?)<\/script>/gi;
+  var sm;
+  while ((sm = sr.exec(html)) !== null) scs.push(sm[1]);
+  for (var s = 0; s < scs.length; s++) {
+    var sc = scs[s];
+    var su = sc.match(/https?:\/\/[^\s"'`\[\]{}()\\]{10,}/gi);
+    if (su) found = found.concat(su);
+  }
+
+  var au = html.match(/https?:\/\/[^\s"'<>\[\]{}()\\]{10,}/gi);
+  if (au) found = found.concat(au);
+
+  // Làm sạch
+  var clean = [];
+  for (var i = 0; i < found.length; i++) {
+    var u = found[i];
+    if (typeof u !== 'string') continue;
+    u = u.replace(/\\/g, '').trim().replace(/^["'`]+|["'`]+$/g, '');
+    if (u.indexOf('//') === 0) u = 'https:' + u;
+    if (u.indexOf('http') === 0 && u.length > 15) clean.push(u);
+  }
+
+  // Loại trùng
+  var seen = {};
+  var uniq = [];
+  for (var i = 0; i < clean.length; i++) {
+    if (!seen[clean[i]]) { seen[clean[i]] = true; uniq.push(clean[i]); }
+  }
+
+  return uniq;
+}
+
+// ===== CHỌN LINK TỐT NHẤT =====
+function pickBestLink(links) {
+  if (links.length === 0) return null;
+
+  // 1. Tìm link redirect nội bộ (/go/, /direct/...)
+  for (var i = 0; i < links.length; i++) {
+    for (var j = 0; j < redirectPaths.length; j++) {
+      if (links[i].indexOf(redirectPaths[j]) !== -1) {
+        log('  🎯 Redirect nội bộ: ' + links[i].substring(0, 60), 'y');
+        return links[i];
+      }
+    }
+  }
+
+  // 2. Lọc bỏ rác
+  var bl = ['cloudflare', 'recaptcha', 'googletagmanager', 'facebook.net',
+    '.js', '.css', '.png', '.jpg', '.jpeg', '.svg', '.ico', '.gif',
+    '.woff', '.ttf', 'analytics', 'gtag', 'ajax', 'yoads', 'favicon'
+  ];
+  var filtered = [];
+  for (var i = 0; i < links.length; i++) {
+    var u = links[i];
+    var l = u.toLowerCase();
+    var bad = false;
+    for (var j = 0; j < bl.length; j++) {
+      if (l.indexOf(bl[j]) !== -1) { bad = true; break; }
+    }
+    if (!bad) filtered.push(u);
+  }
+
+  // 3. Ưu tiên link download
+  var prio = ['drive.google.com', 'docs.google.com', 'mega.nz', 'mediafire.com',
+    'dropbox.com', 'pastebin.com', 'github.com', 'download', 'file',
+    'get', 'zip', 'rar', '7z', 'exe', 'apk', 'pdf', 'mp4', 'mp3'
+  ];
+  for (var i = 0; i < prio.length; i++) {
+    for (var j = 0; j < filtered.length; j++) {
+      if (filtered[j].toLowerCase().indexOf(prio[i]) !== -1) {
+        log('  ⭐ Ưu tiên: ' + prio[i], 'g');
+        return filtered[j];
+      }
+    }
+  }
+
+  // 4. Link dài nhất
+  if (filtered.length > 0) {
+    var longest = filtered[0];
+    for (var i = 1; i < filtered.length; i++) {
+      if (filtered[i].length > longest.length) longest = filtered[i];
+    }
+    log('  📏 Dài nhất: ' + longest.length + ' ký tự', 'o');
+    return longest;
+  }
+
+  return null;
+}
+
+// ===== FOLLOW REDIRECT =====
+async function followRedirects(links) {
+  for (var i = 0; i < links.length; i++) {
+    var link = links[i];
+    try {
+      log('  🔄 Thử: ' + link.substring(0, 60));
+      var ctrl = new AbortController();
+      var to = setTimeout(function() { ctrl.abort(); }, 6000);
+      var res = await fetch(link, {
+        method: 'GET',
+        redirect: 'follow',
+        signal: ctrl.signal,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Accept': 'text/html,application/xhtml+xml'
+        }
+      });
+      clearTimeout(to);
+
+      if (res.url !== link && !isLink4m(res.url)) {
+        log('  ✅ Redirect đến: ' + res.url.substring(0, 60), 'g');
+        return res.url;
+      }
+
+      // Parse HTML tìm meta refresh
+      var html = await res.text();
+      var meta = html.match(/<meta[^>]*http-equiv=["']refresh["'][^>]*content=["']\d+;\s*url=([^"'\s>]+)/i);
+      if (meta && meta[1]) {
+        var next = meta[1];
+        if (next.indexOf('http') !== 0) {
+          var domain = getDomain(link);
+          next = 'https://' + domain + '/' + next.replace(/^\//, '');
+        }
+        if (!isLink4m(next)) {
+          log('  ✅ Meta refresh: ' + next.substring(0, 60), 'g');
+          return next;
+        }
+      }
+    } catch (e) {
+      log('  ❌ ' + e.message.substring(0, 30), 'r');
+    }
+  }
+  return null;
+}
+
+// ===== KIỂM TRA LINK ĐÍCH =====
+async function checkLink(url) {
+  log('  🔬 Kiểm tra link đích...');
+  var r = { alive: false, isFile: false, fileName: '', fileSize: '', httpCode: 0 };
+
+  try {
+    var ctrl = new AbortController();
+    var to = setTimeout(function() { ctrl.abort(); }, 8000);
+    var res = await fetch(url, {
+      method: 'HEAD',
+      signal: ctrl.signal,
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    });
+    clearTimeout(to);
+
+    r.httpCode = res.status;
+    var ct = res.headers.get('content-type') || '';
+    var cl = res.headers.get('content-length') || '';
+    var disp = res.headers.get('content-disposition') || '';
+    r.fileSize = cl;
+
+    if (res.status === 200 || res.status === 302 || res.status === 301) {
+      r.alive = true;
+      log('  ✅ HTTP ' + res.status + ' - Link sống', 'g');
+    } else if (res.status === 404) {
+      log('  ❌ 404 - Link chết', 'r');
+    } else {
+      log('  ⚠ HTTP ' + res.status, 'o');
+    }
+
+    var ctl = ct.toLowerCase();
+    var fileTypes = ['zip', 'rar', '7z', 'octet-stream', 'exe', 'apk', 'pdf', 'mp4', 'mpeg', 'android', 'x-rar', 'x-7z'];
+    for (var i = 0; i < fileTypes.length; i++) {
+      if (ctl.indexOf(fileTypes[i]) !== -1) {
+        r.isFile = true;
+        var fn = url.split('/').pop().split('?')[0];
+        r.fileName = fn && fn.indexOf('.') !== -1 ? fn : 'file';
+        log('  📁 FILE: ' + r.fileName + ' (' + fmtSize(r.fileSize) + ')', 'g');
+        break;
+      }
+    }
+
+    if (!r.isFile && (disp.indexOf('attachment') !== -1 || disp.indexOf('filename') !== -1)) {
+      r.isFile = true;
+      var fm = disp.match(/filename[^;=\n]*=["']?([^"';\n]+)["']?/i);
+      if (fm) r.fileName = fm[1];
+      log('  📥 File download: ' + r.fileName, 'g');
+    }
+
+    if (!r.isFile && (ctl.indexOf('html') !== -1 || ctl.indexOf('text') !== -1)) {
+      log('  🌐 Trang web, không phải file', 'o');
+    }
+
+  } catch (e) {
+    log('  ❌ Không check được: ' + e.message.substring(0, 30), 'r');
+  }
+
+  // Fallback: đoán từ URL
+  if (!r.isFile) {
+    var lo = url.toLowerCase();
+    var exts = ['.zip', '.rar', '.7z', '.exe', '.apk', '.ipa', '.pdf', '.mp4', '.mp3', '.mkv', '.avi', '.dmg', '.iso', '.tar', '.gz'];
+    for (var i = 0; i < exts.length; i++) {
+      if (lo.indexOf(exts[i]) !== -1) {
+        r.isFile = true;
+        r.fileName = url.split('/').pop().split('?')[0];
+        log('  📁 Đuôi file: ' + exts[i], 'g');
+        break;
+      }
+    }
+  }
+
+  return r;
+}
+
+function fmtSize(b) {
+  if (!b || b === '0') return 'Không rõ';
+  var n = parseInt(b);
+  if (isNaN(n)) return b;
+  if (n < 1024) return n + ' B';
+  if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
+  if (n < 1073741824) return (n / 1048576).toFixed(1) + ' MB';
+  return (n / 1073741824).toFixed(2) + ' GB';
+}
+
+// ===== BYPASS CHÍNH =====
+async function doBypass() {
+  var input = document.getElementById('linkInput');
+  var url = input.value.trim();
+  var btn = document.getElementById('btnBypass');
+  var spinner = document.getElementById('spinner');
+  var resultBox = document.getElementById('resultBox');
+  var btnOpen = document.getElementById('btnOpen');
+  var logBox = document.getElementById('logBox');
+
+  logBox.innerHTML = '';
+  resultBox.className = 'result';
+  resultBox.innerHTML = '<span class="placeholder">Đang xử lý...</span>';
+  btnOpen.classList.remove('show');
+  finalLink = '';
+
+  if (!url) {
+    resultBox.className = 'result error';
+    resultBox.innerHTML = '⚠ Vui lòng nhập link Link4m!';
+    return;
+  }
+
+  if (!isLink4m(url)) {
+    resultBox.className = 'result error';
+    resultBox.innerHTML = '⚠ Link không phải Link4m!\nHỗ trợ: .com .net .org .app .xyz .me .info .co .vip .pro .top';
+    return;
+  }
+
+  // Hiển thị domain nhận diện
+  var detectedDomain = getLink4mDomain(url);
+  var tags = document.querySelectorAll('.variant-tag');
+  for (var t = 0; t < tags.length; t++) {
+    tags[t].classList.remove('active');
+    if (tags[t].textContent === '.' + detectedDomain.split('.').pop()) {
+      tags[t].classList.add('active');
+    }
+  }
+
+  log('🔍 Bắt đầu bypass...', 'y');
+  log('📎 Domain: ' + detectedDomain, 'y');
+  log('🔗 Link: ' + url.substring(0, 50) + '...', 'y');
+
+  btn.disabled = true;
+  btn.textContent = 'ĐANG BYPASS...';
+  spinner.classList.add('show');
+
+  var destination = null;
+
+  // ===== METHOD 1: BYPASS.PM API =====
+  log('📡 Method 1: Bypass.pm API...');
+  try {
+    var apiRes = await fetch('https://bypass.pm/bypass', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: url })
+    });
+    if (apiRes.ok) {
+      var data = await apiRes.json();
+      if (data.destination && !isLink4m(data.destination)) {
+        destination = data.destination;
+        log('✅ Bypass.pm OK!', 'g');
+      } else if (data.url && !isLink4m(data.url)) {
+        destination = data.url;
+        log('✅ Bypass.pm OK!', 'g');
+      }
+    }
+  } catch (e) {
+    log('❌ Bypass.pm thất bại', 'r');
+  }
+
+  // ===== METHOD 2: PROXY FETCH + EXTRACT =====
+  if (!destination) {
+    log('📡 Method 2: Proxy fetch + extract...');
+    var proxies = [
+      'https://api.allorigins.win/raw?url=',
+      'https://corsproxy.io/?',
+      'https://api.codetabs.com/v1/proxy?quest='
+    ];
+
+    for (var p = 0; p < proxies.length; p++) {
+      if (destination) break;
+      try {
+        var proxyUrl = proxies[p] + encodeURIComponent(url);
+        log('  Thử proxy #' + (p + 1) + '...');
+        var res = await fetch(proxyUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0' }
+        });
+        if (res.ok) {
+          var html = await res.text();
+          log('  ✅ ' + html.length + ' ký tự', 'g');
+
+          if (html.in
