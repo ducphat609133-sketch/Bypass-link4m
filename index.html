@@ -14,7 +14,9 @@ body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;m
 .card{background:#111;border:1px solid #222;border-radius:16px;padding:20px}
 input{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:14px;outline:none;margin-bottom:12px;text-align:center}
 input:focus{border-color:#ff003c}
-button{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:2px;margin-bottom:6px}
+.btn-row{display:flex;gap:8px}
+.btn-row button{flex:1;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:2px}
+.btn-row .btn-open{flex:0;width:50px;background:#222;color:#ff003c;border:1px solid #ff003c;font-size:18px}
 button:active{transform:scale(0.97)}
 button.loading{opacity:0.6;pointer-events:none}
 .result-box{margin-top:14px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:16px;min-height:50px;word-break:break-all;cursor:pointer;font-family:'Courier New',monospace;font-size:13px}
@@ -37,9 +39,6 @@ button.loading{opacity:0.6;pointer-events:none}
 .footer span:hover{color:#fff}
 .toast{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:8px 20px;border-radius:20px;font-weight:bold;font-size:12px;z-index:999;display:none}
 .toast.show{display:block}
-.btn-row{display:flex;gap:8px}
-.btn-row button{flex:1}
-.btn-row .btn-open{flex:0;width:50px;background:#222;color:#ff003c;border:1px solid #ff003c;font-size:18px}
 </style>
 </head>
 <body>
@@ -81,115 +80,106 @@ function toggleLog(){logVisible=!logVisible;var lb=document.getElementById('logB
 function showLoading(s){var sp=document.getElementById('spinner');var b=document.getElementById('btnBypass');if(s){sp.classList.add('show');b.classList.add('loading');b.textContent='ĐANG XỬ LÝ...'}else{sp.classList.remove('show');b.classList.remove('loading');b.textContent='⚡ BYPASS'}}
 function showResult(msg,type){var rb=document.getElementById('resultBox');rb.className='result-box';if(type==='success')rb.classList.add('success');else if(type==='error')rb.classList.add('error');else rb.classList.add('info');rb.innerHTML=msg}
 
-function extractAllLinks(html){
-// Giải mã HTML entities
-html=html.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\\\//g,'/').replace(/\\"/g,'"');
+function extractBestLink(html){
+html=html.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\\\//g,'/');
 
 var found=[];
 
-// 1. Meta refresh
-var metaMatch=html.match(/<meta[^>]*http-equiv\s*=\s*["']refresh["'][^>]*content\s*=\s*["']\d+\s*;\s*url\s*=\s*([^"'\s>]+)/i);
-if(metaMatch&&metaMatch[1]){found.push(metaMatch[1]);log('  📎 Meta refresh: '+metaMatch[1].substring(0,60),'good')}
+// Meta refresh
+var m1=html.match(/<meta[^>]*http-equiv\s*=\s*["']refresh["'][^>]*content\s*=\s*["']\d+\s*;\s*url\s*=\s*([^"'\s>]+)/i);
+if(m1&&m1[1])found.push(m1[1]);
 
-// 2. window.location / location.href / location.replace
-var locPatterns=[/window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']+)["']/gi,/location\.(?:replace|assign|href)\s*\(\s*["']([^"']+)["']\s*\)/gi,/window\.open\s*\(\s*["']([^"']+)["']/gi,/top\.location\s*=\s*["']([^"']+)["']/gi,/document\.location\s*=\s*["']([^"']+)["']/gi];
-for(var i=0;i<locPatterns.length;i++){
-var matches=html.matchAll(locPatterns[i]);
-for(var m of matches){if(m[1]&&m[1].length>5)found.push(m[1])}
+// window.location = "..."
+var m2=html.match(/window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']{5,})["']/gi);
+if(m2)for(var i=0;i<m2.length;i++){var t=m2[i].match(/["']([^"']+)["']/);if(t)found.push(t[1])}
+
+// location.replace/href/assign("...")
+var m3=html.match(/location\.(?:replace|assign|href)\s*\(\s*["']([^"']{5,})["']\s*\)/gi);
+if(m3)for(var i=0;i<m3.length;i++){var t=m3[i].match(/["']([^"']+)["']/);if(t)found.push(t[1])}
+
+// window.open("...")
+var m4=html.match(/window\.open\s*\(\s*["']([^"']{5,})["']/gi);
+if(m4)for(var i=0;i<m4.length;i++){var t=m4[i].match(/["']([^"']+)["']/);if(t)found.push(t[1])}
+
+// <a href="...">
+var m5=html.match(/<a[^>]*href\s*=\s*["'](https?:\/\/[^"']+?)["'][^>]*>/gi);
+if(m5)for(var i=0;i<m5.length;i++){var t=m5[i].match(/href\s*=\s*["']([^"']+)["']/i);if(t)found.push(t[1])}
+
+// onclick="location='...'"
+var m6=html.match(/onclick\s*=\s*["'][^"']*(?:location|window\.open|href)\s*[=\(]\s*["']([^"']{5,})["']/gi);
+if(m6)for(var i=0;i<m6.length;i++){var t=m6[i].match(/["']([^"']{5,})["']$/);if(t)found.push(t[1])}
+
+// data-url="..."
+var m7=html.match(/data-(?:url|link|href|redirect|target|dest|go|download|file|direct)\s*=\s*["'](https?:\/\/[^"']+)["']/gi);
+if(m7)for(var i=0;i<m7.length;i++){var t=m7[i].match(/["'](https?:\/\/[^"']+)["']/i);if(t)found.push(t[1])}
+
+// atob("...")
+var m8=html.match(/atob\s*\(\s*["']([A-Za-z0-9+/=]{20,})["']\s*\)/g);
+if(m8)for(var i=0;i<m8.length;i++){var t=m8[i].match(/["']([A-Za-z0-9+/=]{20,})["']/);if(t)try{var d=atob(t[1]);if(d.indexOf('http')===0)found.push(d)}catch(e){}}
+
+// var x = "https://..."
+var m9=html.match(/(?:var|let|const)\s+\w+\s*=\s*["'](https?:\/\/[^\s"'<>]{15,}?)["']/gi);
+if(m9)for(var i=0;i<m9.length;i++){var t=m9[i].match(/["'](https?:\/\/[^"']+)["']/);if(t)found.push(t[1])}
+
+// "url":"...", "link":"..."
+var m10=html.match(/["'](?:url|link|redirect|target|dest|download|file|get|go|direct|source|drive)["']\s*:\s*["'](https?:\/\/[^"']{8,}?)["']/gi);
+if(m10)for(var i=0;i<m10.length;i++){var t=m10[i].match(/["'](https?:\/\/[^"']+)["']/);if(t)found.push(t[1])}
+
+// Script content
+var scripts=[];var sr=/<script[^>]*>([\s\S]*?)<\/script>/gi;var sm;
+while((sm=sr.exec(html))!==null)scripts.push(sm[1]);
+for(var s=0;s<scripts.length;s++){
+var sc=scripts[s];
+var su=sc.match(/https?:\/\/[^\s"'`\[\]{}()\\]{10,}/gi);if(su)found=found.concat(su);
+var eu=sc.match(/https?:\\\/\\\/[^\s"'`\[\]{}()\\]{10,}/gi);if(eu)for(var e=0;e<eu.length;e++)found.push(eu[e].replace(/\\\//g,'/'));
 }
 
-// 3. Thẻ <a href="...">
-var aMatches=html.matchAll(/<a[^>]*href\s*=\s*["'](https?:\/\/[^"']+?)["'][^>]*>/gi);
-for(var m of aMatches){if(m[1])found.push(m[1])}
-
-// 4. onclick redirect
-var onclickMatches=html.matchAll(/onclick\s*=\s*["'][^"']*(?:location|window\.open|href|replace)\s*[=\(]\s*["']([^"']+)["']/gi);
-for(var m of onclickMatches){if(m[1]&&m[1].length>5)found.push(m[1])}
-
-// 5. data-url, data-link, data-href, data-redirect
-var dataMatches=html.matchAll(/data-(?:url|link|href|redirect|target|dest|go|download|file|direct)\s*=\s*["'](https?:\/\/[^"']+)["']/gi);
-for(var m of dataMatches){if(m[1])found.push(m[1])}
-
-// 6. atob(base64)
-var b64Matches=html.matchAll(/atob\s*\(\s*["']([A-Za-z0-9+/=]{20,})["']\s*\)/gi);
-for(var m of b64Matches){try{var d=atob(m[1]);if(d.indexOf('http')===0)found.push(d)}catch(e){}}
-
-// 7. var/let/const url = "https://..."
-var varMatches=html.matchAll(/(?:var|let|const)\s+\w+\s*=\s*["'](https?:\/\/[^\s"'<>]{15,}?)["']/gi);
-for(var m of varMatches){if(m[1])found.push(m[1])}
-
-// 8. JSON keys: "url":"...", "link":"...", "download":"..."
-var jsonMatches=html.matchAll(/["'](?:url|link|redirect|target|dest|download|file|get|go|direct|source|drive)["']\s*:\s*["'](https?:\/\/[^"']{8,}?)["']/gi);
-for(var m of jsonMatches){if(m[1])found.push(m[1])}
-
-// 9. URL trong script
-var scriptContent=[];var sr=/<script[^>]*>([\s\S]*?)<\/script>/gi;var sm;
-while((sm=sr.exec(html))!==null)scriptContent.push(sm[1]);
-for(var s=0;s<scriptContent.length;s++){
-var sc=scriptContent[s];
-var urls=sc.match(/https?:\/\/[^\s"'`\[\]{}()\\]{10,}/gi);if(urls)found=found.concat(urls);
-var escaped=sc.match(/https?:\\\/\\\/[^\s"'`\[\]{}()\\]{10,}/gi);if(escaped)for(var e=0;e<escaped.length;e++)found.push(escaped[e].replace(/\\\//g,'/'));
-}
-
-// 10. TẤT CẢ URL trong HTML (quan trọng nhất - bắt mọi thứ)
+// TẤT CẢ URL
 var allUrls=html.match(/https?:\/\/[^\s"'<>\[\]{}()\\]{10,}/gi);
 if(allUrls)found=found.concat(allUrls);
 
-// ===== LÀM SẠCH =====
+// Làm sạch
 var clean=[];
 for(var i=0;i<found.length;i++){
 var u=found[i];if(typeof u!=='string')continue;
-u=u.replace(/\\/g,'').replace(/&amp;/g,'&').trim();
-// Bỏ dấu quotes thừa
-u=u.replace(/^["'`]+|["'`]+$/g,'');
-// Fix // thành https://
+u=u.replace(/\\/g,'').trim().replace(/^["'`]+|["'`]+$/g,'');
 if(u.indexOf('//')===0)u='https:'+u;
-// Chỉ lấy http/https
-if(u.indexOf('http')!==0)continue;
-if(u.length<15)continue;
-clean.push(u);
+if(u.indexOf('http')===0&&u.length>15)clean.push(u);
 }
 
-// Loại trùng lặp
+// Loại trùng
 var seen={};var unique=[];
 for(var i=0;i<clean.length;i++){if(!seen[clean[i]]){seen[clean[i]]=true;unique.push(clean[i])}}
+log('  📊 Link unique: '+unique.length);
 
-log('  📊 Tổng link unique: '+unique.length);
-
-// ===== LỌC BLACKLIST =====
-var blacklist=['cloudflare.com','challenges.cloudflare.com','link4m.com','link4m.net','google.com','facebook.com','twitter.com','youtube.com','instagram.com','tiktok.com','w3.org','schema.org','jquery','bootstrap','fontawesome','googletagmanager','gstatic','googleapis','doubleclick','facebook.net','pinterest','linkedin','reddit','whatsapp','telegram','ajax.googleapis','cdnjs','jsdelivr','unpkg'];
+// Blacklist
+var bl=['cloudflare.com','challenges.cloudflare.com','link4m.com','link4m.net','link4m.','google.com','facebook.com','twitter.com','youtube.com','instagram.com','tiktok.com','w3.org','schema.org','jquery','bootstrap','fontawesome','googletagmanager','gstatic','googleapis','doubleclick','facebook.net','pinterest','cdnjs','jsdelivr','unpkg','.js','.css','.png','.jpg','.jpeg','.svg','.ico','.gif','.woff','.ttf','ajax','analytics','gtag'];
 var filtered=[];
 for(var i=0;i<unique.length;i++){
 var u=unique[i];var l=u.toLowerCase();
-var blocked=false;
-for(var j=0;j<blacklist.length;j++){if(l.indexOf(blacklist[j])!==-1){blocked=true;break}}
-// Bỏ file ảnh, css, js, font
-if(l.indexOf('.js')!==-1||l.indexOf('.css')!==-1||l.indexOf('.png')!==-1||l.indexOf('.jpg')!==-1||l.indexOf('.jpeg')!==-1||l.indexOf('.svg')!==-1||l.indexOf('.ico')!==-1||l.indexOf('.gif')!==-1||l.indexOf('.woff')!==-1||l.indexOf('.ttf')!==-1)blocked=true;
-if(!blocked)filtered.push(u);
+var bad=false;
+for(var j=0;j<bl.length;j++){if(l.indexOf(bl[j])!==-1){bad=true;break}}
+if(!bad)filtered.push(u);
 }
+log('  🔍 Sau blacklist: '+filtered.length);
 
-log('  🔍 Sau blacklist: '+filtered.length+' link');
-
-// ===== ƯU TIÊN =====
-// 1. Link download/file
-var dlKeywords=['drive.google.com','docs.google.com','mega.nz','mediafire.com','dropbox.com','zippyshare.com','pastebin.com','github.com','download','/file/','/get/','/dl/','dl=','?download','&download','file','get','key','code','paste','source','dll','media','share','direct','raw'];
-for(var i=0;i<dlKeywords.length;i++){
+// Ưu tiên
+var prio=['drive.google.com','docs.google.com','mega.nz','mediafire.com','dropbox.com','pastebin.com','github.com','download','/file/','/get/','/dl/','file','get','key','code','paste','source','dll','media','share','direct','raw','zip','rar','7z','exe','apk','ipa','pdf','mp4','mp3'];
+for(var i=0;i<prio.length;i++){
 for(var j=0;j<filtered.length;j++){
-if(filtered[j].toLowerCase().indexOf(dlKeywords[i])!==-1){
-log('  ⭐ Ưu tiên: '+dlKeywords[i],'good');
+if(filtered[j].toLowerCase().indexOf(prio[i])!==-1){
+log('  ⭐ Ưu tiên: '+prio[i],'good');
 return filtered[j];
 }
 }
 }
 
-// 2. Link dài nhất (thường là link đích)
 if(filtered.length>0){
 var longest=filtered[0];
 for(var i=1;i<filtered.length;i++){if(filtered[i].length>longest.length)longest=filtered[i]}
-log('  📏 Link dài nhất: '+longest.length+' ký tự');
+log('  📏 Dài nhất: '+longest.length+' ký tự');
 return longest;
 }
-
 return null;
 }
 
@@ -216,28 +206,25 @@ var result=null;
 log('📡 Method 1: Bypass.pm API','info');
 try{
 var res1=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
-if(res1.ok){var data=await res1.json();if(data.destination){result=data.destination;log('✅ Bypass.pm: '+result.substring(0,60),'good')}else if(data.url){result=data.url;log('✅ Bypass.pm: '+result.substring(0,60),'good')}else{log('⚠ Response không có link','warn')}}else{log('❌ HTTP '+res1.status,'bad')}
+if(res1.ok){var data=await res1.json();if(data.destination){result=data.destination;log('✅ Bypass.pm OK','good')}else if(data.url){result=data.url;log('✅ Bypass.pm OK','good')}}else{log('❌ HTTP '+res1.status,'bad')}
 }catch(e){log('❌ Lỗi: '+e.message,'bad')}
 
 // Method 2: Jina AI
 if(!result){
 log('📡 Method 2: Jina AI','info');
 try{
-var targetUrl='https://r.jina.ai/https://'+url.replace('https://','').replace('http://','');
-var res2=await fetch(targetUrl,{headers:{'Accept':'text/markdown'}});
+var jinaUrl='https://r.jina.ai/https://'+url.replace('https://','').replace('http://','');
+var res2=await fetch(jinaUrl,{headers:{'Accept':'text/markdown'}});
 if(res2.ok){
 var text=await res2.text();
 log('✅ Jina OK - '+text.length+' ký tự','good');
 if(text.indexOf('turnstile')!==-1||text.indexOf('cloudflare')!==-1){log('⚠ Jina bị Cloudflare','warn')}
-else{
-var ext=extractAllLinks(text);
-if(ext){result=ext;log('🎯 Jina tìm thấy!','good')}else{log('⚠ Jina không tìm thấy link','warn')}
-}
+else{var ext=extractBestLink(text);if(ext){result=ext;log('🎯 Tìm thấy!','good')}else{log('⚠ Không thấy link','warn')}}
 }else{log('❌ HTTP '+res2.status,'bad')}
 }catch(e){log('❌ Lỗi: '+e.message,'bad')}
 }
 
-// Method 3: Proxy fetch
+// Method 3: Proxy
 if(!result){
 log('📡 Method 3: Proxy fetch','info');
 var proxies=['https://api.allorigins.win/raw?url=','https://corsproxy.io/?','https://api.codetabs.com/v1/proxy?quest='];
@@ -246,18 +233,16 @@ if(result)break;
 try{
 var proxyUrl=proxies[p]+encodeURIComponent(url);
 log('  Thử proxy #'+(p+1)+'...');
-var res3=await fetch(proxyUrl,{headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}});
+var res3=await fetch(proxyUrl,{headers:{'User-Agent':'Mozilla/5.0'}});
 if(res3.ok){
 var html=await res3.text();
 log('  ✅ Proxy #'+(p+1)+' OK - '+html.length+' ký tự','good');
 if(html.indexOf('challenges.cloudflare.com')!==-1||html.indexOf('turnstile')!==-1||html.indexOf('cf-browser-verify')!==-1){
-log('  ⚠ Proxy #'+(p+1)+' bị Cloudflare, bỏ qua','warn');
-continue;
+log('  ⚠ Cloudflare, bỏ qua','warn');continue;
 }
-log('  🔍 Đang extract link từ HTML...','info');
-var ext=extractAllLinks(html);
-if(ext){result=ext;log('  🎯 TÌM THẤY LINK!','good');break}
-else{log('  ⚠ Không tìm thấy link','warn')}
+var ext=extractBestLink(html);
+if(ext){result=ext;log('  🎯 TÌM THẤY!','good');break}
+else{log('  ⚠ Không thấy link','warn')}
 }else{log('  ❌ HTTP '+res3.status,'bad')}
 }catch(e){log('  ❌ Lỗi: '+e.message,'bad')}
 }
@@ -272,9 +257,8 @@ finalLink=result;
 showResult('✅ '+result,'success');
 btnOpen.style.display='block';
 log('🏆 THÀNH CÔNG!','good');
-log('🔗 '+result,'info');
 }else{
-showResult('❌ KHÔNG BYPASS ĐƯỢC\nTất cả method đều thất bại\nThử link khác nhé!','error');
+showResult('❌ KHÔNG BYPASS ĐƯỢC\nThử link khác nhé!','error');
 log('💀 THẤT BẠI','bad');
 }
 }
