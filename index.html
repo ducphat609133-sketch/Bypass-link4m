@@ -83,72 +83,80 @@ lb.scrollTop=lb.scrollHeight;
 function toggleLog(){logVisible=!logVisible;var lb=document.getElementById('logBox');if(logVisible)lb.classList.add('show');else lb.classList.remove('show')}
 function showLoading(s){var sp=document.getElementById('spinner');var b=document.getElementById('btnBypass');if(s){sp.classList.add('show');b.classList.add('loading');b.textContent='ĐANG XỬ LÝ...'}else{sp.classList.remove('show');b.classList.remove('loading');b.textContent='⚡ BYPASS'}}
 
-// ===== HÀM FOLLOW REDIRECT =====
+// ===== TẠO LINK /go/ TỪ LINK GỐC =====
+function generateGoLinks(url){
+var links=[];
+// Link4m có thể redirect qua /go/ hoặc /get/ hoặc /download/
+var patterns=['/go/','/get/','/download/','/link/','/out/','/redirect/','/dl/','/d/'];
+// Thay domain gốc bằng domain/go/key
+var u=url.replace('https://','').replace('http://','');
+var parts=u.split('/');
+var domain=parts[0];
+var key=parts[1]||'';
+if(key){
+for(var i=0;i<patterns.length;i++){
+links.push('https://'+domain+patterns[i]+key);
+links.push('http://'+domain+patterns[i]+key);
+}
+}
+return links;
+}
+
+// ===== FOLLOW REDIRECT =====
 async function followRedirect(url,depth){
 if(depth>5)return url;
-log('  🔄 Follow redirect ['+depth+']: '+url.substring(0,60),'info');
+log('  🔄 Follow ['+depth+']: '+url.substring(0,70),'info');
 try{
 var ctrl=new AbortController();var to=setTimeout(function(){ctrl.abort()},5000);
-var res=await fetch(url,{method:'HEAD',redirect:'follow',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0'}});
+var res=await fetch(url,{method:'HEAD',redirect:'follow',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}});
 clearTimeout(to);
 if(res.redirected&&res.url!==url){
-log('  ➡ Redirect đến: '+res.url.substring(0,60),'good');
-// Nếu vẫn là link rút gọn, follow tiếp
-if(res.url.indexOf('link4m')!==-1||res.url.indexOf('ouo.io')!==-1||res.url.indexOf('shrinkme')!==-1||res.url.indexOf('shortconnect')!==-1||res.url.indexOf('work.ink')!==-1||res.url.indexOf('adf.ly')!==-1||res.url.indexOf('bit.ly')!==-1||res.url.indexOf('tinyurl')!==-1){
-return await followRedirect(res.url,depth+1);
-}
+log('  ➡ Redirect: '+res.url.substring(0,70),'good');
+var shortDomains=['link4m','ouo.io','ouo.press','shrinkme','shortconnect','work.ink','adf.ly','adfoc.us','j.gs','q.gs','ay.gy','bit.ly','bitly.','tinyurl','shorturl','shorte.st','gestyy'];
+var isShort=false;
+for(var i=0;i<shortDomains.length;i++){if(res.url.indexOf(shortDomains[i])!==-1){isShort=true;break}}
+if(isShort)return await followRedirect(res.url,depth+1);
 return res.url;
 }
 return url;
 }catch(e){log('  ❌ Redirect lỗi: '+e.message.substring(0,30),'bad');return url}
 }
 
-// ===== HÀM EXTRACT LINK =====
+// ===== EXTRACT LINK =====
 function extractAllLinks(html){
 html=html.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\\\//g,'/');
 var found=[];
 
-// Meta refresh
 var m1=html.match(/<meta[^>]*http-equiv\s*=\s*["']refresh["'][^>]*content\s*=\s*["']\d+\s*;\s*url\s*=\s*([^"'\s>]+)/i);
 if(m1&&m1[1])found.push(m1[1]);
 
-// window.location
 var m2=html.match(/window\.location(?:\s*\.\s*href)?\s*=\s*["']([^"']{5,})["']/gi);
 if(m2)for(var i=0;i<m2.length;i++){var t=m2[i].match(/["']([^"']+)["']/);if(t)found.push(t[1])}
 
-// location.replace/href/assign
 var m3=html.match(/location\.(?:replace|assign|href)\s*\(\s*["']([^"']{5,})["']\s*\)/gi);
 if(m3)for(var i=0;i<m3.length;i++){var t=m3[i].match(/["']([^"']+)["']/);if(t)found.push(t[1])}
 
-// window.open
 var m4=html.match(/window\.open\s*\(\s*["']([^"']{5,})["']/gi);
 if(m4)for(var i=0;i<m4.length;i++){var t=m4[i].match(/["']([^"']+)["']/);if(t)found.push(t[1])}
 
-// <a href>
 var m5=html.match(/<a[^>]*href\s*=\s*["'](https?:\/\/[^"']+?)["'][^>]*>/gi);
 if(m5)for(var i=0;i<m5.length;i++){var t=m5[i].match(/href\s*=\s*["']([^"']+)["']/i);if(t)found.push(t[1])}
 
-// onclick redirect
 var m6=html.match(/onclick\s*=\s*["'][^"']*(?:location|window\.open|href)\s*[=\(]\s*["']([^"']{5,})["']/gi);
 if(m6)for(var i=0;i<m6.length;i++){var t=m6[i].match(/["']([^"']{5,})["']$/);if(t)found.push(t[1])}
 
-// data-url/link/href
 var m7=html.match(/data-(?:url|link|href|redirect|target|dest|go|download|file|direct)\s*=\s*["'](https?:\/\/[^"']+)["']/gi);
 if(m7)for(var i=0;i<m7.length;i++){var t=m7[i].match(/["'](https?:\/\/[^"']+)["']/i);if(t)found.push(t[1])}
 
-// atob
 var m8=html.match(/atob\s*\(\s*["']([A-Za-z0-9+/=]{20,})["']\s*\)/g);
 if(m8)for(var i=0;i<m8.length;i++){var t=m8[i].match(/["']([A-Za-z0-9+/=]{20,})["']/);if(t)try{var d=atob(t[1]);if(d.indexOf('http')===0)found.push(d)}catch(e){}}
 
-// var/let/const url = "..."
 var m9=html.match(/(?:var|let|const)\s+\w+\s*=\s*["'](https?:\/\/[^\s"'<>]{15,}?)["']/gi);
 if(m9)for(var i=0;i<m9.length;i++){var t=m9[i].match(/["'](https?:\/\/[^"']+)["']/);if(t)found.push(t[1])}
 
-// JSON keys
 var m10=html.match(/["'](?:url|link|redirect|target|dest|download|file|get|go|direct|source|drive)["']\s*:\s*["'](https?:\/\/[^"']{8,}?)["']/gi);
 if(m10)for(var i=0;i<m10.length;i++){var t=m10[i].match(/["'](https?:\/\/[^"']+)["']/);if(t)found.push(t[1])}
 
-// Scripts
 var scripts=[];var sr=/<script[^>]*>([\s\S]*?)<\/script>/gi;var sm;
 while((sm=sr.exec(html))!==null)scripts.push(sm[1]);
 for(var s=0;s<scripts.length;s++){
@@ -158,11 +166,9 @@ var eu=sc.match(/https?:\\\/\\\/[^\s"'`\[\]{}()\\]{10,}/gi);if(eu)for(var e=0;e<
 var tl=sc.match(/`(https?:\/\/[^`]{10,})`/gi);if(tl)for(var t=0;t<tl.length;t++)found.push(tl[t].replace(/`/g,''));
 }
 
-// Tất cả URL thô
 var allUrls=html.match(/https?:\/\/[^\s"'<>\[\]{}()\\]{10,}/gi);
 if(allUrls)found=found.concat(allUrls);
 
-// Làm sạch
 var clean=[];
 for(var i=0;i<found.length;i++){
 var u=found[i];if(typeof u!=='string')continue;
@@ -171,26 +177,21 @@ if(u.indexOf('//')===0)u='https:'+u;
 if(u.indexOf('http')===0&&u.length>15)clean.push(u);
 }
 
-// Loại trùng
 var seen={};var unique=[];
 for(var i=0;i<clean.length;i++){if(!seen[clean[i]]){seen[clean[i]]=true;unique.push(clean[i])}}
 log('📊 Link unique ('+unique.length+'):','info');
 for(var i=0;i<unique.length;i++){log('  ['+i+'] '+unique[i].substring(0,90),'link');}
 
-// === ƯU TIÊN 1: Tìm link /go/ hoặc redirect nội bộ ===
-var internalRedirect=null;
+// Ưu tiên 1: Link redirect nội bộ
 for(var i=0;i<unique.length;i++){
 if(unique[i].indexOf('/go/')!==-1||unique[i].indexOf('/redirect/')!==-1||unique[i].indexOf('/link/')!==-1||unique[i].indexOf('/out/')!==-1||unique[i].indexOf('/get/')!==-1||unique[i].indexOf('/download/')!==-1||unique[i].indexOf('/dl/')!==-1||unique[i].indexOf('/d/')!==-1){
-internalRedirect=unique[i];
-log('🎯 Tìm thấy link redirect nội bộ: '+internalRedirect.substring(0,60),'good');
-break;
+log('🎯 Link redirect nội bộ: '+unique[i].substring(0,60),'good');
+return unique[i];
 }
 }
 
-if(internalRedirect)return internalRedirect;
-
-// === LỌC BLACKLIST ===
-var bl=['challenges.cloudflare.com','cloudflare.com','google.com/recaptcha','googletagmanager','facebook.net','.js','.css','.png','.jpg','.jpeg','.svg','.ico','.gif','.woff','.ttf','analytics','gtag','ajax','yoads.net'];
+// Blacklist
+var bl=['challenges.cloudflare.com','cloudflare.com','google.com/recaptcha','googletagmanager','facebook.net','.js','.css','.png','.jpg','.jpeg','.svg','.ico','.gif','.woff','.ttf','analytics','gtag','ajax','yoads.net','favicon'];
 var filtered=[];
 for(var i=0;i<unique.length;i++){
 var u=unique[i];var l=u.toLowerCase();
@@ -203,61 +204,39 @@ for(var i=0;i<filtered.length;i++){log('  ✅ '+filtered[i].substring(0,90),'goo
 
 if(filtered.length===0)return null;
 
-// Ưu tiên link download
 var prio=['drive.google.com','docs.google.com','mega.nz','mediafire.com','dropbox.com','pastebin.com','github.com','download','file','get','zip','rar','7z','exe','apk','pdf','mp4','mp3'];
-for(var i=0;i<prio.length;i++){
-for(var j=0;j<filtered.length;j++){
-if(filtered[j].toLowerCase().indexOf(prio[i])!==-1){log('⭐ Ưu tiên: '+prio[i],'good');return filtered[j];}
-}
-}
+for(var i=0;i<prio.length;i++){for(var j=0;j<filtered.length;j++){if(filtered[j].toLowerCase().indexOf(prio[i])!==-1){log('⭐ '+prio[i],'good');return filtered[j];}}}
 
-// Link dài nhất
 var longest=filtered[0];
 for(var i=1;i<filtered.length;i++){if(filtered[i].length>longest.length)longest=filtered[i]}
-log('📏 Link dài nhất: '+longest.length+' ký tự','info');
+log('📏 Dài nhất: '+longest.length+' ký tự','info');
 return longest;
 }
 
-// ===== CHECK LINK =====
 async function checkLink(url){
-log('🔬 Kiểm tra link...','info');
+log('🔬 Kiểm tra: '+url.substring(0,60),'info');
 var r={alive:false,isFile:false,fileName:'',fileSize:'',httpCode:0};
 try{
 var ctrl=new AbortController();var to=setTimeout(function(){ctrl.abort()},6000);
 var res=await fetch(url,{method:'HEAD',signal:ctrl.signal,headers:{'User-Agent':'Mozilla/5.0'}});
 clearTimeout(to);
-r.httpCode=res.status;
-var ct=res.headers.get('content-type')||'';
-var cl=res.headers.get('content-length')||'';
-var disp=res.headers.get('content-disposition')||'';
-r.fileSize=cl;
+r.httpCode=res.status;var ct=res.headers.get('content-type')||'';var cl=res.headers.get('content-length')||'';
+var disp=res.headers.get('content-disposition')||'';r.fileSize=cl;
 
-if(res.status===200||res.status===302||res.status===301){r.alive=true;log('✅ HTTP '+res.status+' - Link sống','good')}
-else if(res.status===404){log('❌ 404 - Link chết','bad')}
-else{log('⚠ HTTP '+res.status,'warn')}
+if(res.status===200||res.status===302||res.status===301){r.alive=true;log('✅ HTTP '+res.status,'good')}
+else if(res.status===404){log('❌ 404','bad')}
+else log('⚠ HTTP '+res.status,'warn');
 
-var ctLower=ct.toLowerCase();
-if(ctLower.indexOf('zip')!==-1||ctLower.indexOf('rar')!==-1||ctLower.indexOf('7z')!==-1||ctLower.indexOf('octet-stream')!==-1||ctLower.indexOf('exe')!==-1||ctLower.indexOf('apk')!==-1||ctLower.indexOf('pdf')!==-1||ctLower.indexOf('mp4')!==-1||ctLower.indexOf('mpeg')!==-1||ctLower.indexOf('android')!==-1){
-r.isFile=true;var fn=url.split('/').pop().split('?')[0];if(fn&&fn.indexOf('.')!==-1)r.fileName=fn;else r.fileName='file';
-log('📁 FILE: '+r.fileName+' ('+formatSize(cl)+')','good');
-}else if(disp.indexOf('attachment')!==-1){r.isFile=true;var fm=disp.match(/filename[^;=\n]*=["']?([^"';\n]+)["']?/i);if(fm)r.fileName=fm[1];log('📥 File: '+r.fileName,'good')}
-else if(ctLower.indexOf('html')!==-1){log('🌐 Trang web','info')}
-}catch(e){log('❌ Không check được: '+e.message.substring(0,30),'bad')}
+var ctl=ct.toLowerCase();
+if(ctl.indexOf('zip')!==-1||ctl.indexOf('rar')!==-1||ctl.indexOf('7z')!==-1||ctl.indexOf('octet-stream')!==-1||ctl.indexOf('exe')!==-1||ctl.indexOf('apk')!==-1||ctl.indexOf('pdf')!==-1||ctl.indexOf('mp4')!==-1||ctl.indexOf('mpeg')!==-1||ctl.indexOf('android')!==-1){r.isFile=true;var fn=url.split('/').pop().split('?')[0];r.fileName=fn&&fn.indexOf('.')!==-1?fn:'file';log('📁 FILE: '+r.fileName+' ('+formatSize(cl)+')','good')}
+else if(disp.indexOf('attachment')!==-1){r.isFile=true;var fm=disp.match(/filename[^;=\n]*=["']?([^"';\n]+)["']?/i);if(fm)r.fileName=fm[1];log('📥 File: '+r.fileName,'good')}
+else if(ctl.indexOf('html')!==-1)log('🌐 Web','info');
+}catch(e){log('❌ '+e.message.substring(0,30),'bad')}
 
-// Fallback từ URL
-if(!r.isFile){
-var lower=url.toLowerCase();
-var exts=['.zip','.rar','.7z','.exe','.apk','.ipa','.pdf','.mp4','.mp3','.mkv','.avi','.dmg','.iso','.tar','.gz'];
-for(var i=0;i<exts.length;i++){if(lower.indexOf(exts[i])!==-1){r.isFile=true;r.fileName=url.split('/').pop().split('?')[0];log('📁 Đuôi file: '+exts[i],'good');break}}
-}
+if(!r.isFile){var lower=url.toLowerCase();var exts=['.zip','.rar','.7z','.exe','.apk','.ipa','.pdf','.mp4','.mp3','.mkv','.avi','.dmg','.iso','.tar','.gz'];for(var i=0;i<exts.length;i++){if(lower.indexOf(exts[i])!==-1){r.isFile=true;r.fileName=url.split('/').pop().split('?')[0];log('📁 Đuôi: '+exts[i],'good');break}}}
 return r;
 }
-
-function formatSize(b){
-if(!b||b==='0')return'Không rõ';var n=parseInt(b);if(isNaN(n))return b;
-if(n<1024)return n+' B';if(n<1048576)return(n/1024).toFixed(1)+' KB';
-if(n<1073741824)return(n/1048576).toFixed(1)+' MB';return(n/1073741824).toFixed(2)+' GB';
-}
+function formatSize(b){if(!b||b==='0')return'?';var n=parseInt(b);if(isNaN(n))return b;if(n<1024)return n+' B';if(n<1048576)return(n/1024).toFixed(1)+' KB';if(n<1073741824)return(n/1048576).toFixed(1)+' MB';return(n/1073741824).toFixed(2)+' GB';}
 
 // ===== BYPASS CHÍNH =====
 async function bypass(){
@@ -265,7 +244,13 @@ var input=document.getElementById('linkInput');var url=input.value.trim();
 var logBox=document.getElementById('logBox');var btnOpen=document.getElementById('btnOpen');
 logBox.innerHTML='';btnOpen.style.display='none';finalLink='';
 if(!url){showResult('⚠ Vui lòng nhập link!','error');return}
-log('🔍 Bắt đầu bypass...','info');log('📎 Link: '+url,'info');
+
+// Hỗ trợ link4m.org
+if(url.indexOf('link4m.org')!==-1){
+log('🔍 Phát hiện link4m.org','info');
+}
+
+log('🔍 Bắt đầu bypass...','info');log('📎 '+url,'info');
 showLoading(true);showResult('Đang xử lý...','info');
 var result=null;
 
@@ -273,7 +258,7 @@ var result=null;
 log('📡 Method 1: Bypass.pm API','info');
 try{
 var res1=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
-if(res1.ok){var d=await res1.json();if(d.destination){result=d.destination;log('✅ Bypass.pm OK','good')}else if(d.url){result=d.url;log('✅ Bypass.pm OK','good')}else log('⚠ Ko có link','warn')}else log('❌ HTTP '+res1.status,'bad')
+if(res1.ok){var d=await res1.json();if(d.destination){result=d.destination;log('✅ Bypass.pm OK','good')}else if(d.url){result=d.url;log('✅ Bypass.pm OK','good')}}else log('❌ HTTP '+res1.status,'bad')
 }catch(e){log('❌ '+e.message,'bad')}
 
 // Method 2: Jina AI
@@ -284,33 +269,41 @@ var jinaUrl='https://r.jina.ai/https://'+url.replace('https://','').replace('htt
 var res2=await fetch(jinaUrl,{headers:{'Accept':'text/markdown'}});
 if(res2.ok){var text=await res2.text();log('✅ Jina OK - '+text.length+' ký tự','good');
 if(text.indexOf('turnstile')!==-1||text.indexOf('cloudflare')!==-1)log('⚠ Cloudflare','warn');
-else{var ext=extractAllLinks(text);if(ext){result=ext;log('🎯 Tìm thấy!','good')}else log('⚠ Ko thấy link','warn')}
+else{var ext=extractAllLinks(text);if(ext){result=ext;log('🎯 Tìm thấy!','good')}}
 }else log('❌ HTTP '+res2.status,'bad')
 }catch(e){log('❌ '+e.message,'bad')}
 }
 
-// Method 3: Proxy
+// Method 3: Proxy fetch
 if(!result){
 log('📡 Method 3: Proxy fetch','info');
-var proxies=['https://api.allorigins.win/raw?url=','https://corsproxy.io/?','https://api.codetabs.com/v1/proxy?quest='];
+var proxies=['https://api.allorigins.win/raw?url=','https://corsproxy.io/?','https://api.codetabs.com/v1/proxy?quest=','https://cors-anywhere.herokuapp.com/'];
 for(var p=0;p<proxies.length;p++){
 if(result)break;
 try{var proxyUrl=proxies[p]+encodeURIComponent(url);log('  Thử proxy #'+(p+1)+'...');
 var res3=await fetch(proxyUrl,{headers:{'User-Agent':'Mozilla/5.0'}});
 if(res3.ok){var html=await res3.text();log('  ✅ Proxy #'+(p+1)+' OK - '+html.length+' ký tự','good');
 if(html.indexOf('challenges.cloudflare.com')!==-1||html.indexOf('turnstile')!==-1){log('  ⚠ Cloudflare','warn');continue}
-var ext=extractAllLinks(html);
-if(ext){result=ext;log('  🎯 TÌM THẤY!','good');break}else log('  ⚠ Ko thấy link','warn')
+var ext=extractAllLinks(html);if(ext){result=ext;log('  🎯 TÌM THẤY!','good');break}
 }else log('  ❌ HTTP '+res3.status,'bad')}catch(e){log('  ❌ '+e.message,'bad')}
 }
 }
 
-// ===== NẾU KẾT QUẢ LÀ LINK REDIRECT NỘI BỘ (/go/...) THÌ FOLLOW =====
-if(result&&(result.indexOf('/go/')!==-1||result.indexOf('/redirect/')!==-1||result.indexOf('/link/')!==-1||result.indexOf('/out/')!==-1||result.indexOf('/get/')!==-1||result.indexOf('/download/')!==-1)){
-log('🔄 Link redirect nội bộ, đang follow...','info');
-showLoading(true);
-result=await followRedirect(result,0);
-showLoading(false);
+// Method 4: TỰ TẠO LINK /go/ VÀ FOLLOW
+if(!result){
+log('📡 Method 4: Tạo link /go/ và follow...','info');
+var goLinks=generateGoLinks(url);
+for(var g=0;g<goLinks.length;g++){
+log('  Thử: '+goLinks[g].substring(0,60));
+try{
+var followed=await followRedirect(goLinks[g],0);
+if(followed!==goLinks[g]&&followed.indexOf('link4m')===-1){
+result=followed;
+log('  🎯 Follow thành công!','good');
+break;
+}
+}catch(e){}
+}
 }
 
 showLoading(false);
@@ -320,14 +313,13 @@ result=result.replace(/\\/g,'').replace(/&amp;/g,'&').trim();
 if(result.indexOf('http')!==0)result='https://'+result.replace(/^\/+/,'');
 finalLink=result;
 
-// Kiểm tra
-log('🔬 Đang kiểm tra link...','info');
+log('🔬 Đang kiểm tra...','info');
 var ck=await checkLink(result);
 var statusHTML='';
-if(ck.alive&&ck.isFile){statusHTML='<span class="status-badge status-alive">✅ FILE: '+ck.fileName+' ('+formatSize(ck.fileSize)+')</span>';showResultBox(result,'success',statusHTML);log('🏆 FILE DOWNLOAD!','good');btnOpen.style.display='block'}
-else if(ck.alive&&!ck.isFile){statusHTML='<span class="status-badge status-web">⚠ LINK SỐNG - TRANG WEB (KHÔNG PHẢI FILE)</span>';showResultBox(result,'warning',statusHTML);log('⚠ Trang web','warn');btnOpen.style.display='block'}
+if(ck.alive&&ck.isFile){statusHTML='<span class="status-badge status-alive">✅ FILE: '+ck.fileName+' ('+formatSize(ck.fileSize)+')</span>';showResultBox(result,'success',statusHTML);log('🏆 FILE!','good');btnOpen.style.display='block'}
+else if(ck.alive&&!ck.isFile){statusHTML='<span class="status-badge status-web">⚠ LINK SỐNG - TRANG WEB</span>';showResultBox(result,'warning',statusHTML);log('⚠ Web','warn');btnOpen.style.display='block'}
 else if(!ck.alive&&ck.httpCode===404){statusHTML='<span class="status-badge status-dead">❌ 404 - LINK CHẾT, HÃY THỬ FILE KHÁC</span>';showResultBox(result,'error',statusHTML);log('💀 404','bad')}
-else{statusHTML='<span class="status-badge status-dead">❌ KHÔNG TRUY CẬP ĐƯỢC (HTTP '+ck.httpCode+')</span>';showResultBox(result,'error',statusHTML);log('💀 Lỗi '+ck.httpCode,'bad')}
+else{statusHTML='<span class="status-badge status-dead">❌ KHÔNG TRUY CẬP ĐƯỢC</span>';showResultBox(result,'error',statusHTML);log('💀 Lỗi','bad')}
 }else{
 showResult('❌ KHÔNG BYPASS ĐƯỢC - Thử link khác!','error');
 log('💀 THẤT BẠI','bad');
