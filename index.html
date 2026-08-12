@@ -19,17 +19,6 @@
             justify-content: center;
             align-items: center;
             color: #00ff00;
-            overflow-x: hidden;
-        }
-        
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.1;
         }
         
         .container {
@@ -40,35 +29,11 @@
             max-width: 700px;
             width: 90%;
             box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
-            }
-            to {
-                box-shadow: 0 0 40px rgba(0, 255, 0, 0.4);
-            }
         }
         
         .header {
             text-align: center;
             margin-bottom: 30px;
-        }
-        
-        .title {
-            font-size: 2.5em;
-            font-weight: bold;
-            text-shadow: 0 0 10px #00ff00;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-        
-        .subtitle {
-            font-size: 1em;
-            color: #00cc00;
-            opacity: 0.8;
         }
         
         .skull {
@@ -83,15 +48,12 @@
             75% { transform: translateX(5px); }
         }
         
-        .input-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
+        .title {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff00;
             margin-bottom: 10px;
-            font-size: 1.1em;
-            color: #00ff00;
+            letter-spacing: 2px;
         }
         
         input[type="text"] {
@@ -104,12 +66,7 @@
             font-size: 1em;
             border-radius: 5px;
             outline: none;
-            transition: all 0.3s;
-        }
-        
-        input[type="text"]:focus {
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-            background: rgba(0, 20, 0, 0.8);
+            margin-bottom: 15px;
         }
         
         .btn {
@@ -123,24 +80,18 @@
             font-weight: bold;
             cursor: pointer;
             border-radius: 5px;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
         .btn:hover {
             background: #00cc00;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
-            transform: scale(1.02);
         }
         
         .btn:disabled {
             background: #333;
             color: #666;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
         
         .result-box {
@@ -155,18 +106,6 @@
         
         .result-box.show {
             display: block;
-            animation: fadeIn 0.5s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .result-label {
-            color: #00ff00;
-            font-weight: bold;
-            margin-bottom: 10px;
         }
         
         .result-url {
@@ -174,7 +113,7 @@
             background: rgba(0, 0, 0, 0.5);
             padding: 10px;
             border-radius: 3px;
-            margin-bottom: 10px;
+            margin: 10px 0;
         }
         
         .copy-btn {
@@ -185,7 +124,7 @@
             cursor: pointer;
             font-family: 'Courier New', monospace;
             border-radius: 3px;
-            transition: all 0.3s;
+            margin-right: 10px;
         }
         
         .copy-btn:hover {
@@ -218,59 +157,48 @@
             100% { transform: rotate(360deg); }
         }
         
-        .error {
-            color: #ff0000;
-            border-color: #ff0000;
-        }
-        
-        .history {
-            margin-top: 30px;
+        .log {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 5px;
             max-height: 200px;
             overflow-y: auto;
-        }
-        
-        .history-item {
-            padding: 10px;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
             font-size: 0.8em;
             color: #888;
+            display: none;
         }
         
-        .history-item:hover {
-            background: rgba(0, 255, 0, 0.1);
-            cursor: pointer;
+        .log.show {
+            display: block;
         }
         
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.8em;
-            color: #666;
+        .log-entry {
+            margin: 3px 0;
         }
         
-        .footer a {
+        .log-entry.success {
             color: #00ff00;
-            text-decoration: none;
+        }
+        
+        .log-entry.error {
+            color: #ff0000;
         }
     </style>
 </head>
 <body>
-    <canvas class="matrix-bg" id="matrix"></canvas>
-    
     <div class="container">
         <div class="header">
             <span class="skull">💀</span>
             <div class="title">DEVILS WILL RISE</div>
-            <div class="subtitle">Link4m Bypass Tool</div>
-            <div style="font-size: 0.7em; color: #666; margin-top: 5px;">
+            <div style="color: #00cc00; margin-bottom: 5px;">Link4m Bypass Tool</div>
+            <div style="font-size: 0.7em; color: #666;">
                 Owner: @UnknownGuy9876 | Channel: @SGCodexs
             </div>
         </div>
         
-        <div class="input-group">
-            <label>🔗 Enter Link4m URL:</label>
-            <input type="text" id="urlInput" placeholder="https://link4m.net/xxxxxx" autocomplete="off">
-        </div>
+        <input type="text" id="urlInput" placeholder="https://link4m.net/YXg0Oj" autocomplete="off">
         
         <button class="btn" id="bypassBtn" onclick="bypassLink()">
             ⚡ BYPASS NOW
@@ -278,89 +206,66 @@
         
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <div>Decrypting link...</div>
+            <div>Bypassing... Please wait</div>
         </div>
+        
+        <div class="log" id="log"></div>
         
         <div class="result-box" id="resultBox">
-            <div class="result-label">✅ Destination URL:</div>
+            <div style="color: #00ff00; font-weight: bold;">✅ Destination URL:</div>
             <div class="result-url" id="resultUrl"></div>
-            <button class="copy-btn" onclick="copyResult()">📋 Copy Link</button>
-            <a id="openLink" href="#" target="_blank" style="margin-left: 10px;">
-                <button class="copy-btn">🌐 Open Link</button>
+            <button class="copy-btn" onclick="copyResult()">📋 Copy</button>
+            <a id="openLink" href="#" target="_blank">
+                <button class="copy-btn">🌐 Open</button>
             </a>
-        </div>
-        
-        <div class="history" id="history">
-            <div style="color: #00ff00; margin-bottom: 10px;">📜 Recent Bypasses:</div>
-        </div>
-        
-        <div class="footer">
-            Built with 🔥 by <a href="https://t.me/SGCodexs" target="_blank">@SGCodexs</a> 
-            | Owner: <a href="https://t.me/UnknownGuy9876" target="_blank">@UnknownGuy9876</a>
         </div>
     </div>
 
     <script>
-        // Matrix rain effect
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
+        const PROXY_LIST = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest=',
+            'https://cors-anywhere.herokuapp.com/',
+        ];
         
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        let currentProxyIndex = 0;
         
-        const chars = '01';
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('log');
+            log.classList.add('show');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
         }
         
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#0F0';
-            ctx.font = fontSize + 'px monospace';
-            
-            for (let i = 0; i < drops.length; i++) {
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
+        async function fetchWithProxy(url, options = {}) {
+            for (let i = 0; i < PROXY_LIST.length; i++) {
+                const proxy = PROXY_LIST[(currentProxyIndex + i) % PROXY_LIST.length];
+                try {
+                    const proxyUrl = proxy + encodeURIComponent(url);
+                    addLog(`Trying proxy: ${proxy.split('/')[2]}`, 'info');
+                    
+                    const response = await fetch(proxyUrl, {
+                        ...options,
+                        headers: {
+                            ...options.headers,
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        currentProxyIndex = (currentProxyIndex + i) % PROXY_LIST.length;
+                        addLog(`Proxy success: ${proxy.split('/')[2]}`, 'success');
+                        return response;
+                    }
+                } catch (e) {
+                    addLog(`Proxy failed: ${proxy.split('/')[2]} - ${e.message}`, 'error');
                 }
-                drops[i]++;
             }
-        }
-        
-        setInterval(drawMatrix, 35);
-        
-        // Load history from localStorage
-        let bypassHistory = JSON.parse(localStorage.getItem('link4m_history') || '[]');
-        
-        function updateHistory() {
-            const historyDiv = document.getElementById('history');
-            if (bypassHistory.length === 0) {
-                historyDiv.innerHTML = '<div style="color: #00ff00; margin-bottom: 10px;">📜 Recent Bypasses:</div><div style="color: #666;">No history yet</div>';
-                return;
-            }
-            
-            let html = '<div style="color: #00ff00; margin-bottom: 10px;">📜 Recent Bypasses:</div>';
-            bypassHistory.slice(-10).reverse().forEach((item, index) => {
-                html += `
-                    <div class="history-item" onclick="useHistory('${item.original}')" title="Click to reuse">
-                        🔗 ${item.original.substring(0, 30)}... → ${item.destination.substring(0, 40)}...
-                    </div>
-                `;
-            });
-            historyDiv.innerHTML = html;
-        }
-        
-        function useHistory(url) {
-            document.getElementById('urlInput').value = url;
-            bypassLink();
+            throw new Error('All proxies failed');
         }
         
         async function bypassLink() {
@@ -371,6 +276,12 @@
             const loading = document.getElementById('loading');
             const bypassBtn = document.getElementById('bypassBtn');
             const openLink = document.getElementById('openLink');
+            const log = document.getElementById('log');
+            
+            // Reset
+            log.innerHTML = '';
+            log.classList.remove('show');
+            resultBox.classList.remove('show');
             
             if (!url) {
                 alert('Please enter a Link4m URL');
@@ -382,45 +293,72 @@
                 return;
             }
             
-            // Reset
-            resultBox.classList.remove('show', 'error');
             loading.classList.add('show');
             bypassBtn.disabled = true;
             bypassBtn.textContent = '⏳ BYPASSING...';
             
             try {
-                // Use allorigins.win as CORS proxy (free and fast)
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const encodedUrl = encodeURIComponent(url);
+                addLog(`Starting bypass for: ${url}`, 'info');
                 
                 // Step 1: Get initial page
-                const response1 = await fetch(proxyUrl + encodedUrl);
+                addLog('Step 1: Fetching initial page...', 'info');
+                const response1 = await fetchWithProxy(url);
                 const html1 = await response1.text();
+                addLog('Got initial page response', 'success');
                 
-                // Parse HTML
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html1, 'text/html');
+                // Step 2: Extract the actual redirect URL or next page
+                const redirectMatch = html1.match(/window\.location\s*=\s*["']([^"']+)["']/);
                 
-                // Step 2: Look for form and submit
-                let formData = new URLSearchParams();
-                const form = doc.querySelector('form');
-                let actionUrl = url;
-                
-                if (form) {
-                    const inputs = form.querySelectorAll('input');
-                    inputs.forEach(input => {
-                        if (input.name) {
-                            formData.append(input.name, input.value || '');
-                        }
-                    });
+                if (redirectMatch) {
+                    addLog('Found JavaScript redirect', 'success');
+                    let redirectUrl = redirectMatch[1];
                     
-                    const action = form.getAttribute('action');
-                    if (action) {
-                        actionUrl = new URL(action, url).href;
+                    // Fix relative URLs
+                    if (redirectUrl.startsWith('/')) {
+                        const urlObj = new URL(url);
+                        redirectUrl = urlObj.origin + redirectUrl;
                     }
                     
-                    // Submit form via proxy
-                    const formResponse = await fetch(proxyUrl + encodeURIComponent(actionUrl), {
+                    addLog(`Following redirect to: ${redirectUrl}`, 'info');
+                    const response2 = await fetchWithProxy(redirectUrl);
+                    const html2 = await response2.text();
+                    
+                    const finalUrl = extractFinalUrl(html2);
+                    if (finalUrl) {
+                        showResult(finalUrl, url);
+                        return;
+                    }
+                }
+                
+                // Step 3: Look for forms and submit
+                const formMatch = html1.match(/<form[^>]*action=["']([^"']*)["'][^>]*>/);
+                if (formMatch) {
+                    addLog('Found form, extracting data...', 'info');
+                    
+                    // Extract all input values
+                    const inputRegex = /<input[^>]*name=["']([^"']*)["'][^>]*value=["']([^"']*)["'][^>]*>/g;
+                    const formData = new URLSearchParams();
+                    let match;
+                    
+                    while ((match = inputRegex.exec(html1)) !== null) {
+                        formData.append(match[1], match[2]);
+                    }
+                    
+                    // Add submit value if exists
+                    const submitMatch = html1.match(/<input[^>]*type=["']submit["'][^>]*name=["']([^"']*)["'][^>]*value=["']([^"']*)["']/);
+                    if (submitMatch) {
+                        formData.append(submitMatch[1], submitMatch[2]);
+                    }
+                    
+                    let actionUrl = formMatch[1];
+                    if (!actionUrl.startsWith('http')) {
+                        const urlObj = new URL(url);
+                        actionUrl = urlObj.origin + (actionUrl.startsWith('/') ? '' : '/') + actionUrl;
+                    }
+                    
+                    addLog(`Submitting form to: ${actionUrl}`, 'info');
+                    
+                    const formResponse = await fetchWithProxy(actionUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -429,73 +367,55 @@
                     });
                     
                     const formHtml = await formResponse.text();
-                    const formDoc = parser.parseFromString(formHtml, 'text/html');
+                    addLog('Form submitted successfully', 'success');
                     
-                    // Look for continue/get link button
-                    await processPage(formDoc, actionUrl);
-                } else {
-                    await processPage(doc, url);
+                    // Step 4: Look for countdown and final link
+                    const countdownMatch = formHtml.match(/var\s+(?:seconds|timer|countdown)\s*=\s*(\d+)/);
+                    if (countdownMatch) {
+                        const waitTime = parseInt(countdownMatch[1]) + 1;
+                        addLog(`Countdown detected: ${waitTime} seconds`, 'info');
+                        await new Promise(resolve => setTimeout(resolve, waitTime * 1000));
+                    }
+                    
+                    const finalUrl = extractFinalUrl(formHtml);
+                    if (finalUrl) {
+                        showResult(finalUrl, url);
+                        return;
+                    }
+                    
+                    // Step 5: Check for another redirect
+                    const nextRedirect = formHtml.match(/window\.location\s*=\s*["']([^"']+)["']/);
+                    if (nextRedirect) {
+                        let nextUrl = nextRedirect[1];
+                        if (nextUrl.startsWith('/')) {
+                            const urlObj = new URL(url);
+                            nextUrl = urlObj.origin + nextUrl;
+                        }
+                        
+                        addLog(`Following second redirect to: ${nextUrl}`, 'info');
+                        const finalResponse = await fetchWithProxy(nextUrl);
+                        const finalHtml = await finalResponse.text();
+                        
+                        const finalDestUrl = extractFinalUrl(finalHtml);
+                        if (finalDestUrl) {
+                            showResult(finalDestUrl, url);
+                            return;
+                        }
+                    }
                 }
                 
-                async function processPage(doc, baseUrl) {
-                    // Wait for potential timers (simulate)
-                    await new Promise(resolve => setTimeout(resolve, 3000));
-                    
-                    // Look for get link button
-                    const getLink = doc.querySelector('#getlink') || 
-                                   doc.querySelector('.get-link') ||
-                                   doc.querySelector('a[href*="http"]');
-                    
-                    if (getLink) {
-                        let finalUrl = getLink.href;
-                        
-                        // If it's a continue page, fetch it
-                        if (finalUrl.includes('continue') || finalUrl.includes('link4m')) {
-                            const continueResponse = await fetch(proxyUrl + encodeURIComponent(finalUrl));
-                            const continueHtml = await continueResponse.text();
-                            const continueDoc = parser.parseFromString(continueHtml, 'text/html');
-                            
-                            const finalLink = continueDoc.querySelector('#getlink') ||
-                                            continueDoc.querySelector('.get-link') ||
-                                            continueDoc.querySelector('a[href*="http"]');
-                            
-                            if (finalLink && finalLink.href && !finalLink.href.includes('link4m')) {
-                                finalUrl = finalLink.href;
-                            }
-                        }
-                        
-                        if (finalUrl && !finalUrl.includes('link4m')) {
-                            showResult(finalUrl, url);
-                            return;
-                        }
-                    }
-                    
-                    // Try to find any external link
-                    const allLinks = doc.querySelectorAll('a[href^="http"]');
-                    for (let link of allLinks) {
-                        if (!link.href.includes('link4m') && !link.href.includes('allorigins')) {
-                            showResult(link.href, url);
-                            return;
-                        }
-                    }
-                    
-                    // If no link found, check for redirect scripts
-                    const scripts = doc.querySelectorAll('script');
-                    for (let script of scripts) {
-                        const content = script.textContent;
-                        const match = content.match(/window\.location\s*=\s*["']([^"']+)["']/) ||
-                                     content.match(/location\.href\s*=\s*["']([^"']+)["']/);
-                        if (match && !match[1].includes('link4m')) {
-                            showResult(match[1], url);
-                            return;
-                        }
-                    }
-                    
-                    throw new Error('Could not find destination URL');
+                // Direct check in initial HTML
+                const directUrl = extractFinalUrl(html1);
+                if (directUrl) {
+                    showResult(directUrl, url);
+                    return;
                 }
+                
+                throw new Error('Could not extract destination URL');
                 
             } catch (error) {
-                resultBox.classList.add('show', 'error');
+                addLog(`ERROR: ${error.message}`, 'error');
+                resultBox.classList.add('show');
                 resultUrl.textContent = 'Error: ' + error.message;
                 resultUrl.style.color = '#ff0000';
                 openLink.href = '#';
@@ -504,6 +424,49 @@
                 bypassBtn.disabled = false;
                 bypassBtn.textContent = '⚡ BYPASS NOW';
             }
+        }
+        
+        function extractFinalUrl(html) {
+            // Method 1: Get link button
+            const getLinkMatch = html.match(/<a[^>]*id=["']getlink["'][^>]*href=["']([^"']+)["']/);
+            if (getLinkMatch && !getLinkMatch[1].includes('link4m')) {
+                addLog('Found #getlink button URL', 'success');
+                return getLinkMatch[1];
+            }
+            
+            // Method 2: Get link class
+            const getLinkClassMatch = html.match(/<a[^>]*class=["'][^"']*get-link[^"']*["'][^>]*href=["']([^"']+)["']/);
+            if (getLinkClassMatch && !getLinkClassMatch[1].includes('link4m')) {
+                addLog('Found .get-link button URL', 'success');
+                return getLinkClassMatch[1];
+            }
+            
+            // Method 3: Find any external link
+            const allLinks = html.match(/<a[^>]*href=["'](https?:\/\/(?!.*link4m)[^"']+)["']/gi);
+            if (allLinks) {
+                for (let linkHtml of allLinks) {
+                    const urlMatch = linkHtml.match(/href=["']([^"']+)["']/);
+                    if (urlMatch && !urlMatch[1].includes('link4m') && urlMatch[1].startsWith('http')) {
+                        // Skip common non-destination URLs
+                        if (!urlMatch[1].includes('google') && 
+                            !urlMatch[1].includes('facebook') &&
+                            !urlMatch[1].includes('twitter') &&
+                            urlMatch[1].length > 20) {
+                            addLog('Found external link in page', 'success');
+                            return urlMatch[1];
+                        }
+                    }
+                }
+            }
+            
+            // Method 4: Check for meta refresh
+            const metaMatch = html.match(/<meta[^>]*http-equiv=["']refresh["'][^>]*content=["']\d+;url=([^"']+)["']/i);
+            if (metaMatch && !metaMatch[1].includes('link4m')) {
+                addLog('Found meta refresh URL', 'success');
+                return metaMatch[1];
+            }
+            
+            return null;
         }
         
         function showResult(destinationUrl, originalUrl) {
@@ -516,43 +479,26 @@
             resultUrl.style.color = '#fff';
             openLink.href = destinationUrl;
             
-            // Add to history
-            bypassHistory.push({
-                original: originalUrl,
-                destination: destinationUrl,
-                timestamp: new Date().toISOString()
-            });
-            
-            // Keep only last 50 items
-            if (bypassHistory.length > 50) {
-                bypassHistory = bypassHistory.slice(-50);
-            }
-            
-            localStorage.setItem('link4m_history', JSON.stringify(bypassHistory));
-            updateHistory();
+            addLog(`✅ SUCCESS: ${destinationUrl}`, 'success');
         }
         
         function copyResult() {
             const resultUrl = document.getElementById('resultUrl').textContent;
             navigator.clipboard.writeText(resultUrl).then(() => {
-                const btn = event.target;
-                const originalText = btn.textContent;
-                btn.textContent = '✅ Copied!';
+                const btns = document.querySelectorAll('.copy-btn');
+                btns[0].textContent = '✅ Copied!';
                 setTimeout(() => {
-                    btn.textContent = originalText;
+                    btns[0].textContent = '📋 Copy';
                 }, 2000);
             });
         }
         
-        // Handle Enter key
+        // Enter key support
         document.getElementById('urlInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 bypassLink();
             }
         });
-        
-        // Initialize
-        updateHistory();
     </script>
 </body>
-              </html>
+</html>
