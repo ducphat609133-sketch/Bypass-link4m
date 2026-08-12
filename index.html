@@ -1,125 +1,558 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Link4m Bypass - Devils Will Rise</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;padding:15px}
-.wrap{width:100%;max-width:450px;text-align:center}
-h1{color:#ff003c;font-family:monospace;font-size:26px;margin-bottom:5px;text-shadow:0 0 20px #ff003c;letter-spacing:3px}
-.sub{color:#666;font-size:10px;margin-bottom:15px}
-.sub span{color:#ff003c}
-.card{background:#111;border:1px solid #222;border-radius:16px;padding:18px}
-input{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:25px;color:#fff;font-size:14px;outline:none;margin-bottom:10px;text-align:center}
-input:focus{border-color:#ff003c}
-button{width:100%;padding:14px;background:#ff003c;color:#fff;border:none;border-radius:25px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:2px}
-button:active{transform:scale(0.97)}
-button:disabled{opacity:0.5}
-.res{margin-top:12px;background:#0d0d0d;border:2px solid #222;border-radius:12px;padding:15px;min-height:40px;word-break:break-all;font-family:monospace;font-size:13px;line-height:1.5;cursor:pointer}
-.res.good{border-color:#00ff41;color:#00ff41}
-.res.bad{border-color:#ff003c;color:#ff4444}
-.res.wait{border-color:#ffcc00;color:#ffcc00}
-.placeholder{color:#333;font-size:12px}
-.load{width:20px;height:20px;border:3px solid #333;border-top:3px solid #ff003c;border-radius:50%;animation:spin 0.7s linear infinite;margin:8px auto;display:none}
-.load.show{display:block}
-@keyframes spin{to{transform:rotate(360deg)}}
-.foot{margin-top:12px;color:#444;font-size:10px}
-.foot span{color:#ff003c;cursor:pointer}
-.toast{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:8px 18px;border-radius:20px;font-weight:bold;font-size:12px;z-index:999;display:none}
-.toast.show{display:block}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link4m Bypass - SGCodex</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #00ff00;
+            overflow-x: hidden;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            }
+            to {
+                box-shadow: 0 0 40px rgba(0, 255, 0, 0.4);
+            }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .title {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1em;
+            color: #00cc00;
+            opacity: 0.8;
+        }
+        
+        .skull {
+            font-size: 3em;
+            display: block;
+            animation: shake 0.5s infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #00ff00;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            background: rgba(0, 20, 0, 0.8);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #00cc00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            transform: scale(1.02);
+        }
+        
+        .btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.5);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            display: none;
+            word-break: break-all;
+        }
+        
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-label {
+            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .result-url {
+            color: #fff;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+        
+        .copy-btn {
+            background: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(0, 255, 0, 0.2);
+            border-top: 3px solid #00ff00;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #ff0000;
+            border-color: #ff0000;
+        }
+        
+        .history {
+            margin-top: 30px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+            font-size: 0.8em;
+            color: #888;
+        }
+        
+        .history-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+            cursor: pointer;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        .footer a {
+            color: #00ff00;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-<div class="toast" id="toast">Copied!</div>
-<div class="wrap">
-<h1>LINK4M BYPASS</h1>
-<div class="sub">Owner <span>@DP</span> | <span>@SGCodexs</span></div>
-<div class="card">
-<input type="text" id="url" placeholder="Paste link Link4m..." autofocus>
-<button id="btn" onclick="bypass()">BYPASS</button>
-<div class="load" id="load"></div>
-<div class="res" id="res" onclick="copyRes()">
-<span class="placeholder">Click BYPASS...</span>
-</div>
-</div>
-<div class="foot">
-<span onclick="clearAll()">Clear</span> | <span>@SGCodexs</span>
-</div>
-</div>
+    <canvas class="matrix-bg" id="matrix"></canvas>
+    
+    <div class="container">
+        <div class="header">
+            <span class="skull">💀</span>
+            <div class="title">DEVILS WILL RISE</div>
+            <div class="subtitle">Link4m Bypass Tool</div>
+            <div style="font-size: 0.7em; color: #666; margin-top: 5px;">
+                Owner: @UnknownGuy9876 | Channel: @SGCodexs
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label>🔗 Enter Link4m URL:</label>
+            <input type="text" id="urlInput" placeholder="https://link4m.net/xxxxxx" autocomplete="off">
+        </div>
+        
+        <button class="btn" id="bypassBtn" onclick="bypassLink()">
+            ⚡ BYPASS NOW
+        </button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Decrypting link...</div>
+        </div>
+        
+        <div class="result-box" id="resultBox">
+            <div class="result-label">✅ Destination URL:</div>
+            <div class="result-url" id="resultUrl"></div>
+            <button class="copy-btn" onclick="copyResult()">📋 Copy Link</button>
+            <a id="openLink" href="#" target="_blank" style="margin-left: 10px;">
+                <button class="copy-btn">🌐 Open Link</button>
+            </a>
+        </div>
+        
+        <div class="history" id="history">
+            <div style="color: #00ff00; margin-bottom: 10px;">📜 Recent Bypasses:</div>
+        </div>
+        
+        <div class="footer">
+            Built with 🔥 by <a href="https://t.me/SGCodexs" target="_blank">@SGCodexs</a> 
+            | Owner: <a href="https://t.me/UnknownGuy9876" target="_blank">@UnknownGuy9876</a>
+        </div>
+    </div>
 
-<script>
-var F='';
-function toast(){var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1500)}
-
-async function bypass(){
-var u=document.getElementById('url').value.trim();
-var b=document.getElementById('btn'),l=document.getElementById('load'),r=document.getElementById('res');
-if(!u)return;
-b.disabled=true;b.textContent='WAIT...';l.classList.add('show');
-r.className='res wait';r.innerHTML='Processing...';
-F='';
-
-// ===== PHƯƠNG PHÁP 1: Fetch trực tiếp qua proxy =====
-try{
-var p1='https://api.allorigins.win/raw?url='+encodeURIComponent(u);
-var x1=await fetch(p1);
-if(x1.ok){
-var h=await x1.text();
-// Tìm tất cả URL trong HTML
-var urls=h.match(/https?:\/\/[^\s"'<>\[\]]{15,}/gi)||[];
-var good=[];
-for(var i=0;i<urls.length;i++){
-var v=urls[i].replace(/\\/g,'').trim();
-if(v.indexOf('link4m')==-1&&v.indexOf('cloudflare')==-1&&v.indexOf('.js')==-1&&v.indexOf('.css')==-1&&v.indexOf('.png')==-1&&v.indexOf('.jpg')==-1&&v.indexOf('google.com')==-1&&v.indexOf('facebook')==-1&&v.indexOf('googletagmanager')==-1&&v.indexOf('recaptcha')==-1&&v.indexOf('favicon')==-1&&v.indexOf('yoads')==-1&&v.indexOf('analytics')==-1&&v.length>20)good.push(v);
-}
-// Chọn link dài nhất
-if(good.length>0){
-var best=good[0];
-for(var j=1;j<good.length;j++){if(good[j].length>best.length)best=good[j]}
-F=best;
-}
-}
-}catch(e){}
-
-// ===== PHƯƠNG PHÁP 2: Tự tạo /go/ link =====
-if(!F){
-try{
-var d=u.replace('https://','').replace('http://','').split('/')[0];
-var k=u.split('/').pop();
-var paths=['/go/','/direct/','/get/'];
-for(var p=0;p<paths.length;p++){
-var gu='https://'+d+paths[p]+k;
-var x2=await fetch(gu,{method:'GET',redirect:'follow'});
-if(x2.url!==gu&&x2.url.indexOf('link4m')===-1){F=x2.url;break}
-}
-}catch(e){}
-}
-
-// ===== PHƯƠNG PHÁP 3: Dùng bypass.pm =====
-if(!F){
-try{
-var x3=await fetch('https://bypass.pm/bypass',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u})});
-if(x3.ok){var d3=await x3.json();if(d3.destination)F=d3.destination;else if(d3.url)F=d3.url}
-}catch(e){}
-}
-
-l.classList.remove('show');
-b.disabled=false;b.textContent='BYPASS';
-
-if(F){
-r.className='res good';
-r.innerHTML='<b>SUCCESS!</b>\n\n'+F+'\n\n<span style="color:#888;font-size:10px">Click to copy</span>';
-toast();
-}else{
-r.className='res bad';
-r.innerHTML='<b>FAILED</b>\n\nCannot bypass. Try opening in browser.';
-}
-}
-
-function copyRes(){if(F){navigator.clipboard.writeText(F).then(toast).catch(function(){var t=document.createElement('textarea');t.value=F;t.style.position='fixed';t.style.left='-9999px';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast()})}}
-function clearAll(){document.getElementById('url').value='';document.getElementById('res').className='res';document.getElementById('res').innerHTML='<span class="placeholder">Click BYPASS...</span>';F='';document.getElementById('url').focus()}
-</script>
+    <script>
+        // Matrix rain effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = '01';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+        
+        // Load history from localStorage
+        let bypassHistory = JSON.parse(localStorage.getItem('link4m_history') || '[]');
+        
+        function updateHistory() {
+            const historyDiv = document.getElementById('history');
+            if (bypassHistory.length === 0) {
+                historyDiv.innerHTML = '<div style="color: #00ff00; margin-bottom: 10px;">📜 Recent Bypasses:</div><div style="color: #666;">No history yet</div>';
+                return;
+            }
+            
+            let html = '<div style="color: #00ff00; margin-bottom: 10px;">📜 Recent Bypasses:</div>';
+            bypassHistory.slice(-10).reverse().forEach((item, index) => {
+                html += `
+                    <div class="history-item" onclick="useHistory('${item.original}')" title="Click to reuse">
+                        🔗 ${item.original.substring(0, 30)}... → ${item.destination.substring(0, 40)}...
+                    </div>
+                `;
+            });
+            historyDiv.innerHTML = html;
+        }
+        
+        function useHistory(url) {
+            document.getElementById('urlInput').value = url;
+            bypassLink();
+        }
+        
+        async function bypassLink() {
+            const urlInput = document.getElementById('urlInput');
+            const url = urlInput.value.trim();
+            const resultBox = document.getElementById('resultBox');
+            const resultUrl = document.getElementById('resultUrl');
+            const loading = document.getElementById('loading');
+            const bypassBtn = document.getElementById('bypassBtn');
+            const openLink = document.getElementById('openLink');
+            
+            if (!url) {
+                alert('Please enter a Link4m URL');
+                return;
+            }
+            
+            if (!url.includes('link4m')) {
+                alert('Invalid URL. Must contain link4m.net, link4m.com, or link4m.org');
+                return;
+            }
+            
+            // Reset
+            resultBox.classList.remove('show', 'error');
+            loading.classList.add('show');
+            bypassBtn.disabled = true;
+            bypassBtn.textContent = '⏳ BYPASSING...';
+            
+            try {
+                // Use allorigins.win as CORS proxy (free and fast)
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const encodedUrl = encodeURIComponent(url);
+                
+                // Step 1: Get initial page
+                const response1 = await fetch(proxyUrl + encodedUrl);
+                const html1 = await response1.text();
+                
+                // Parse HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html1, 'text/html');
+                
+                // Step 2: Look for form and submit
+                let formData = new URLSearchParams();
+                const form = doc.querySelector('form');
+                let actionUrl = url;
+                
+                if (form) {
+                    const inputs = form.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        if (input.name) {
+                            formData.append(input.name, input.value || '');
+                        }
+                    });
+                    
+                    const action = form.getAttribute('action');
+                    if (action) {
+                        actionUrl = new URL(action, url).href;
+                    }
+                    
+                    // Submit form via proxy
+                    const formResponse = await fetch(proxyUrl + encodeURIComponent(actionUrl), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: formData.toString()
+                    });
+                    
+                    const formHtml = await formResponse.text();
+                    const formDoc = parser.parseFromString(formHtml, 'text/html');
+                    
+                    // Look for continue/get link button
+                    await processPage(formDoc, actionUrl);
+                } else {
+                    await processPage(doc, url);
+                }
+                
+                async function processPage(doc, baseUrl) {
+                    // Wait for potential timers (simulate)
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    
+                    // Look for get link button
+                    const getLink = doc.querySelector('#getlink') || 
+                                   doc.querySelector('.get-link') ||
+                                   doc.querySelector('a[href*="http"]');
+                    
+                    if (getLink) {
+                        let finalUrl = getLink.href;
+                        
+                        // If it's a continue page, fetch it
+                        if (finalUrl.includes('continue') || finalUrl.includes('link4m')) {
+                            const continueResponse = await fetch(proxyUrl + encodeURIComponent(finalUrl));
+                            const continueHtml = await continueResponse.text();
+                            const continueDoc = parser.parseFromString(continueHtml, 'text/html');
+                            
+                            const finalLink = continueDoc.querySelector('#getlink') ||
+                                            continueDoc.querySelector('.get-link') ||
+                                            continueDoc.querySelector('a[href*="http"]');
+                            
+                            if (finalLink && finalLink.href && !finalLink.href.includes('link4m')) {
+                                finalUrl = finalLink.href;
+                            }
+                        }
+                        
+                        if (finalUrl && !finalUrl.includes('link4m')) {
+                            showResult(finalUrl, url);
+                            return;
+                        }
+                    }
+                    
+                    // Try to find any external link
+                    const allLinks = doc.querySelectorAll('a[href^="http"]');
+                    for (let link of allLinks) {
+                        if (!link.href.includes('link4m') && !link.href.includes('allorigins')) {
+                            showResult(link.href, url);
+                            return;
+                        }
+                    }
+                    
+                    // If no link found, check for redirect scripts
+                    const scripts = doc.querySelectorAll('script');
+                    for (let script of scripts) {
+                        const content = script.textContent;
+                        const match = content.match(/window\.location\s*=\s*["']([^"']+)["']/) ||
+                                     content.match(/location\.href\s*=\s*["']([^"']+)["']/);
+                        if (match && !match[1].includes('link4m')) {
+                            showResult(match[1], url);
+                            return;
+                        }
+                    }
+                    
+                    throw new Error('Could not find destination URL');
+                }
+                
+            } catch (error) {
+                resultBox.classList.add('show', 'error');
+                resultUrl.textContent = 'Error: ' + error.message;
+                resultUrl.style.color = '#ff0000';
+                openLink.href = '#';
+            } finally {
+                loading.classList.remove('show');
+                bypassBtn.disabled = false;
+                bypassBtn.textContent = '⚡ BYPASS NOW';
+            }
+        }
+        
+        function showResult(destinationUrl, originalUrl) {
+            const resultBox = document.getElementById('resultBox');
+            const resultUrl = document.getElementById('resultUrl');
+            const openLink = document.getElementById('openLink');
+            
+            resultBox.classList.add('show');
+            resultUrl.textContent = destinationUrl;
+            resultUrl.style.color = '#fff';
+            openLink.href = destinationUrl;
+            
+            // Add to history
+            bypassHistory.push({
+                original: originalUrl,
+                destination: destinationUrl,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Keep only last 50 items
+            if (bypassHistory.length > 50) {
+                bypassHistory = bypassHistory.slice(-50);
+            }
+            
+            localStorage.setItem('link4m_history', JSON.stringify(bypassHistory));
+            updateHistory();
+        }
+        
+        function copyResult() {
+            const resultUrl = document.getElementById('resultUrl').textContent;
+            navigator.clipboard.writeText(resultUrl).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+        
+        // Handle Enter key
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                bypassLink();
+            }
+        });
+        
+        // Initialize
+        updateHistory();
+    </script>
 </body>
-</html>
+              </html>
