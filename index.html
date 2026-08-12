@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Link4m Bypass</title>
+<title>Link4m Bypass - No Proxy</title>
 <style>
 body{background:#0a0a0a;color:#0f0;font-family:monospace;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.box{background:#111;border:2px solid #0f0;padding:25px;border-radius:10px;width:90%;max-width:500px;box-shadow:0 0 20px rgba(0,255,0,.3)}
+.box{background:#111;border:2px solid #0f0;padding:20px;border-radius:10px;width:90%;max-width:500px;box-shadow:0 0 20px rgba(0,255,0,.3)}
 h1{text-align:center;font-size:1.8em;margin:0}span{display:block;text-align:center;font-size:.7em;color:#666;margin:5px 0 15px}
 input,button{width:100%;padding:12px;margin-bottom:10px;font-family:monospace;font-size:1em;box-sizing:border-box}
 input{background:#000;border:1px solid #0f0;color:#0f0;outline:none}
 button{background:#0f0;color:#000;border:none;font-weight:bold;cursor:pointer}
 button:disabled{background:#333;color:#666}
-#log{display:none;font-size:.7em;color:#888;margin-top:10px;max-height:150px;overflow-y:auto;padding:8px;background:rgba(0,0,0,.5);border:1px solid #333}
+#iframe-box{display:none;width:100%;height:400px;border:1px solid #0f0;margin-bottom:10px}
 #res{display:none;padding:15px;background:rgba(0,255,0,.1);border:1px solid #0f0;margin-top:10px;word-break:break-all}
-#res a{color:#fff}.g{color:#0f0}.r{color:red}
+a{color:#fff}
 </style>
 </head>
 <body>
@@ -22,172 +22,154 @@ button:disabled{background:#333;color:#666}
 <h1>💀 DEVILS WILL RISE</h1>
 <span>Owner: @UnknownGuy9876 | @SGCodexs</span>
 <input id="url" placeholder="https://link4m.net/YXg0Oj">
-<button id="btn" onclick="go()">⚡ BYPASS</button>
-<div id="log"></div>
+<button id="btn" onclick="start()">⚡ BYPASS</button>
+<iframe id="iframe-box" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
+<div id="status" style="display:none;color:#ff0;text-align:center;margin:10px 0"></div>
 <div id="res"><b>✅ Done:</b><br><span id="link"></span><br><br>
 <button onclick="copy()">📋 Copy</button> <a id="open" href="#" target="_blank"><button>🌐 Open</button></a></div>
 </div>
 <script>
-const P = ['https://api.allorigins.win/raw?url=', 'https://corsproxy.io/?'];
-let pi = 0, L = document.getElementById('log');
-function log(m, c) { L.style.display = 'block'; L.innerHTML += `<div class="${c||''}">[${new Date().toLocaleTimeString()}] ${m}</div>`; L.scrollTop = L.scrollHeight; }
+let finalUrl = '';
+let observer = null;
 
-async function fetchP(url, o = {}) {
-    for (let i = 0; i < P.length; i++) {
-        let p = P[(pi + i) % P.length];
-        try {
-            let r = await fetch(p + encodeURIComponent(url), { ...o, headers: { 'User-Agent': 'Mozilla/5.0' } });
-            if (r.ok) { pi = (pi + i) % P.length; return r; }
-        } catch (e) { log('Proxy fail: ' + p.split('/')[2], 'r'); }
-    }
-    throw new Error('All proxies dead');
-}
-
-function extract(html, baseUrl) {
-    // Link4m thường nhúng base64 hoặc redirect qua trang trung gian
-    let m;
-    
-    // Pattern 1: Direct getlink
-    m = html.match(/<a[^>]*id="getlink"[^>]*href="([^"]+)"/);
-    if (m && m[1].startsWith('http') && !m[1].includes('link4m')) return m[1];
-    
-    // Pattern 2: Class get-link
-    m = html.match(/<a[^>]*class="[^"]*get-link[^"]*"[^>]*href="([^"]+)"/);
-    if (m && m[1].startsWith('http') && !m[1].includes('link4m')) return m[1];
-    
-    // Pattern 3: onclick redirect
-    m = html.match(/onclick=["']window\.open\(['"]([^'"]+)['"]/);
-    if (m && m[1].startsWith('http')) return m[1];
-    
-    // Pattern 4: data-url attribute
-    m = html.match(/data-url=["']([^"']+)["']/);
-    if (m && m[1].startsWith('http') && !m[1].includes('link4m')) return m[1];
-    
-    // Pattern 5: Script redirect
-    m = html.match(/window\.location(?:\s*=\s*|\.href\s*=\s*)["']([^"']+)["']/);
-    if (m && m[1].startsWith('http') && !m[1].includes('link4m')) return m[1];
-    
-    // Pattern 6: Link4m specific - look for the final page after countdown
-    // Sometimes the URL is in a script tag with base64
-    m = html.match(/atob\(['"]([^'"]+)['"]\)/);
-    if (m) {
-        try {
-            let decoded = atob(m[1]);
-            if (decoded.startsWith('http')) return decoded;
-        } catch(e) {}
-    }
-    
-    // Pattern 7: Any link not to link4m
-    let links = html.matchAll(/<a[^>]*href="(https?:\/\/[^"]+)"/gi);
-    for (let l of links) {
-        let u = l[1];
-        if (!u.includes('link4m') && !u.includes('google') && !u.includes('facebook') && u.length > 25) return u;
-    }
-    
-    return null;
-}
-
-async function go() {
+function start() {
     let url = document.getElementById('url').value.trim();
     if (!url.includes('link4m')) return alert('Need link4m URL');
     
+    let iframe = document.getElementById('iframe-box');
     let btn = document.getElementById('btn');
-    btn.disabled = true; btn.textContent = '⏳ Wait...';
+    let status = document.getElementById('status');
     document.getElementById('res').style.display = 'none';
-    L.innerHTML = '';
+    finalUrl = '';
     
+    iframe.style.display = 'block';
+    status.style.display = 'block';
+    status.textContent = '⏳ Loading... Follow instructions in iframe';
+    btn.disabled = true;
+    btn.textContent = '⏳ Monitoring...';
+    
+    // Load link4m in iframe
+    iframe.src = url;
+    
+    // Monitor iframe for changes
+    if (observer) observer.disconnect();
+    
+    observer = new MutationObserver(() => {
+        checkIframe();
+    });
+    
+    iframe.onload = function() {
+        status.textContent = '🔍 Page loaded. Click Continue/Get Link in iframe above...';
+        checkIframe();
+        
+        try {
+            let doc = iframe.contentDocument || iframe.contentWindow.document;
+            observer.observe(doc.body, { childList: true, subtree: true, attributes: true });
+            
+            // Auto-click skip/countdown buttons
+            setTimeout(autoClick, 2000);
+        } catch(e) {
+            status.textContent = '⚠️ Cannot access iframe - CORS blocked. Use manual method below.';
+            manualBypass(url);
+        }
+    };
+}
+
+function autoClick() {
     try {
-        log('Starting: ' + url);
+        let iframe = document.getElementById('iframe-box');
+        let doc = iframe.contentDocument || iframe.contentWindow.document;
         
-        // Step 1: Initial page
-        let r = await fetchP(url);
-        let h = await r.text();
-        log('Got initial page');
-        
-        // Step 2: Check for immediate redirect
-        let redirect = h.match(/window\.location(?:\s*=\s*|\.href\s*=\s*)["']([^"']+)["']/);
-        if (redirect) {
-            let ru = redirect[1];
-            if (!ru.startsWith('http')) ru = new URL(url).origin + (ru.startsWith('/') ? '' : '/') + ru;
-            log('Redirect: ' + ru);
-            r = await fetchP(ru);
-            h = await r.text();
-        }
-        
-        // Step 3: Submit form if exists
-        let formAction = h.match(/<form[^>]*action=["']([^"']*)["']/);
-        if (formAction) {
-            let fd = new URLSearchParams();
-            let inputs = h.matchAll(/<input[^>]*name=["']([^"']*)["'][^>]*value=["']([^"']*)["']/g);
-            for (let inp of inputs) fd.append(inp[1], inp[2] || '');
-            
-            // Add submit button if exists
-            let submit = h.match(/<input[^>]*type=["']submit["'][^>]*name=["']([^"']*)["'][^>]*value=["']([^"']*)["']/);
-            if (submit) fd.append(submit[1], submit[2]);
-            
-            // If no inputs found, add default
-            if (Array.from(fd).length === 0) {
-                let opMatch = h.match(/<input[^>]*name=["']op["'][^>]*value=["']([^"']*)["']/);
-                if (opMatch) fd.append('op', opMatch[1]);
-                let idMatch = h.match(/<input[^>]*name=["']id["'][^>]*value=["']([^"']*)["']/);
-                if (idMatch) fd.append('id', idMatch[1]);
-            }
-            
-            let au = formAction[1];
-            if (!au.startsWith('http')) au = new URL(url).origin + (au.startsWith('/') ? '' : '/') + au;
-            
-            log('Submit form: ' + au);
-            r = await fetchP(au, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: fd.toString() });
-            h = await r.text();
-            log('Form response received');
-        }
-        
-        // Step 4: Handle countdown page
-        let countdown = h.match(/var\s+(?:seconds|timer|countdown)\s*=\s*(\d+)/);
-        if (countdown) {
-            let sec = parseInt(countdown[1]) + 2;
-            log('Waiting ' + sec + 's...');
-            await new Promise(rs => setTimeout(rs, sec * 1000));
-            
-            // After countdown, try to get the final page
-            // Often there's a continue button or auto-redirect
-            let continueMatch = h.match(/<a[^>]*href=["']([^"']*continue[^"']*)["']/);
-            if (continueMatch) {
-                let cu = continueMatch[1];
-                if (!cu.startsWith('http')) cu = new URL(url).origin + (cu.startsWith('/') ? '' : '/') + cu;
-                log('Continue URL: ' + cu);
-                r = await fetchP(cu);
-                h = await r.text();
+        // Click method buttons
+        let btns = doc.querySelectorAll('a, button, input[type=submit]');
+        for (let b of btns) {
+            let text = b.textContent.toLowerCase();
+            if (text.includes('skip') || text.includes('continue') || text.includes('get link') || text.includes('download')) {
+                status.textContent = '🖱️ Auto-clicking: ' + text;
+                b.click();
+                setTimeout(checkIframe, 3000);
+                return;
             }
         }
         
-        // Step 5: Extract final URL
-        let final = extract(h, url);
-        if (final) {
-            document.getElementById('link').textContent = final;
-            document.getElementById('open').href = final;
-            document.getElementById('res').style.display = 'block';
-            log('✅ SUCCESS: ' + final, 'g');
-        } else {
-            // Debug: show raw HTML snippet
-            log('HTML snippet: ' + h.substring(h.indexOf('<body'), h.indexOf('</body>')).substring(0, 500), 'r');
-            log('Could not extract - checking source...', 'r');
-            
-            // Last resort: fetch the page without proxy to see real content
-            log('Try open original URL and check manually', 'r');
-            document.getElementById('link').textContent = 'Failed - Open original link manually: ' + url;
-            document.getElementById('res').style.display = 'block';
+        // If no button found, look for timers
+        let scripts = doc.querySelectorAll('script');
+        for (let s of scripts) {
+            if (s.textContent.includes('setTimeout') || s.textContent.includes('setInterval')) {
+                status.textContent = '⏰ Timer detected, waiting...';
+                setTimeout(checkIframe, 5000);
+                return;
+            }
         }
-    } catch (e) {
-        log('ERROR: ' + e.message, 'r');
+    } catch(e) {
+        status.textContent = '⚠️ Auto-click failed. Click manually in iframe.';
     }
-    btn.disabled = false; btn.textContent = '⚡ BYPASS';
+}
+
+function checkIframe() {
+    try {
+        let iframe = document.getElementById('iframe-box');
+        let doc = iframe.contentDocument || iframe.contentWindow.document;
+        
+        // Look for getlink button
+        let getLink = doc.querySelector('#getlink, .get-link');
+        if (getLink && getLink.href && getLink.href.startsWith('http') && !getLink.href.includes('link4m')) {
+            foundUrl(getLink.href);
+            return;
+        }
+        
+        // Look for any external link
+        let links = doc.querySelectorAll('a[href^="http"]');
+        for (let l of links) {
+            if (!l.href.includes('link4m') && !l.href.includes('google') && l.href.length > 30) {
+                foundUrl(l.href);
+                return;
+            }
+        }
+        
+        // Check for redirect
+        if (doc.URL && !doc.URL.includes('link4m') && doc.URL.startsWith('http')) {
+            foundUrl(doc.URL);
+            return;
+        }
+        
+    } catch(e) {}
+}
+
+function foundUrl(url) {
+    if (finalUrl === url) return;
+    finalUrl = url;
+    
+    let btn = document.getElementById('btn');
+    document.getElementById('link').textContent = url;
+    document.getElementById('open').href = url;
+    document.getElementById('res').style.display = 'block';
+    document.getElementById('status').textContent = '✅ URL Found!';
+    btn.disabled = false;
+    btn.textContent = '⚡ BYPASS AGAIN';
+}
+
+function manualBypass(url) {
+    // Fallback: Open in new tab with redirect detection
+    let status = document.getElementById('status');
+    status.innerHTML = `
+        <div style="color:#ff0;text-align:left">
+        <b>Manual Method:</b><br>
+        1. <a href="${url}" target="_blank" style="color:#0f0">Open Link4m in new tab</a><br>
+        2. Complete any captcha/timer<br>
+        3. Copy final URL and paste below:<br>
+        <input id="manual-url" placeholder="Paste final URL here" style="margin-top:5px">
+        <button onclick="foundUrl(document.getElementById('manual-url').value)" style="margin-top:5px">Submit</button>
+        </div>
+    `;
+    document.getElementById('btn').disabled = false;
+    document.getElementById('btn').textContent = '⚡ RETRY';
 }
 
 function copy() {
     navigator.clipboard.writeText(document.getElementById('link').textContent).then(() => alert('Copied!'));
 }
-document.getElementById('url').addEventListener('keypress', e => { if (e.key === 'Enter') go(); });
+document.getElementById('url').addEventListener('keypress', e => { if (e.key === 'Enter') start(); });
 </script>
 </body>
 </html>
