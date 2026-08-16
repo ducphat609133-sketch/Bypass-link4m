@@ -1,175 +1,254 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Link4m Bypass - No Proxy</title>
-<style>
-body{background:#0a0a0a;color:#0f0;font-family:monospace;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.box{background:#111;border:2px solid #0f0;padding:20px;border-radius:10px;width:90%;max-width:500px;box-shadow:0 0 20px rgba(0,255,0,.3)}
-h1{text-align:center;font-size:1.8em;margin:0}span{display:block;text-align:center;font-size:.7em;color:#666;margin:5px 0 15px}
-input,button{width:100%;padding:12px;margin-bottom:10px;font-family:monospace;font-size:1em;box-sizing:border-box}
-input{background:#000;border:1px solid #0f0;color:#0f0;outline:none}
-button{background:#0f0;color:#000;border:none;font-weight:bold;cursor:pointer}
-button:disabled{background:#333;color:#666}
-#iframe-box{display:none;width:100%;height:400px;border:1px solid #0f0;margin-bottom:10px}
-#res{display:none;padding:15px;background:rgba(0,255,0,.1);border:1px solid #0f0;margin-top:10px;word-break:break-all}
-a{color:#fff}
-</style>
-</head>
-<body>
-<div class="box">
-<h1>💀 DEVILS WILL RISE</h1>
-<span>Owner: @UnknownGuy9876 | @SGCodexs</span>
-<input id="url" placeholder="https://link4m.net/YXg0Oj">
-<button id="btn" onclick="start()">⚡ BYPASS</button>
-<iframe id="iframe-box" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
-<div id="status" style="display:none;color:#ff0;text-align:center;margin:10px 0"></div>
-<div id="res"><b>✅ Done:</b><br><span id="link"></span><br><br>
-<button onclick="copy()">📋 Copy</button> <a id="open" href="#" target="_blank"><button>🌐 Open</button></a></div>
-</div>
-<script>
-let finalUrl = '';
-let observer = null;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-function start() {
-    let url = document.getElementById('url').value.trim();
-    if (!url.includes('link4m')) return alert('Need link4m URL');
-    
-    let iframe = document.getElementById('iframe-box');
-    let btn = document.getElementById('btn');
-    let status = document.getElementById('status');
-    document.getElementById('res').style.display = 'none';
-    finalUrl = '';
-    
-    iframe.style.display = 'block';
-    status.style.display = 'block';
-    status.textContent = '⏳ Loading... Follow instructions in iframe';
-    btn.disabled = true;
-    btn.textContent = '⏳ Monitoring...';
-    
-    // Load link4m in iframe
-    iframe.src = url;
-    
-    // Monitor iframe for changes
-    if (observer) observer.disconnect();
-    
-    observer = new MutationObserver(() => {
-        checkIframe();
-    });
-    
-    iframe.onload = function() {
-        status.textContent = '🔍 Page loaded. Click Continue/Get Link in iframe above...';
-        checkIframe();
-        
-        try {
-            let doc = iframe.contentDocument || iframe.contentWindow.document;
-            observer.observe(doc.body, { childList: true, subtree: true, attributes: true });
-            
-            // Auto-click skip/countdown buttons
-            setTimeout(autoClick, 2000);
-        } catch(e) {
-            status.textContent = '⚠️ Cannot access iframe - CORS blocked. Use manual method below.';
-            manualBypass(url);
-        }
-    };
-}
+  <title>Link4M URL Handler</title>
 
-function autoClick() {
-    try {
-        let iframe = document.getElementById('iframe-box');
-        let doc = iframe.contentDocument || iframe.contentWindow.document;
-        
-        // Click method buttons
-        let btns = doc.querySelectorAll('a, button, input[type=submit]');
-        for (let b of btns) {
-            let text = b.textContent.toLowerCase();
-            if (text.includes('skip') || text.includes('continue') || text.includes('get link') || text.includes('download')) {
-                status.textContent = '🖱️ Auto-clicking: ' + text;
-                b.click();
-                setTimeout(checkIframe, 3000);
-                return;
-            }
-        }
-        
-        // If no button found, look for timers
-        let scripts = doc.querySelectorAll('script');
-        for (let s of scripts) {
-            if (s.textContent.includes('setTimeout') || s.textContent.includes('setInterval')) {
-                status.textContent = '⏰ Timer detected, waiting...';
-                setTimeout(checkIframe, 5000);
-                return;
-            }
-        }
-    } catch(e) {
-        status.textContent = '⚠️ Auto-click failed. Click manually in iframe.';
+  <style>
+    * {
+      box-sizing: border-box;
     }
-}
 
-function checkIframe() {
-    try {
-        let iframe = document.getElementById('iframe-box');
-        let doc = iframe.contentDocument || iframe.contentWindow.document;
-        
-        // Look for getlink button
-        let getLink = doc.querySelector('#getlink, .get-link');
-        if (getLink && getLink.href && getLink.href.startsWith('http') && !getLink.href.includes('link4m')) {
-            foundUrl(getLink.href);
-            return;
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+    }
+
+    .container {
+      width: min(92%, 500px);
+      padding: 30px;
+      background: #1d1d1d;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, .4);
+    }
+
+    h1 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .description {
+      color: #aaa;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid #444;
+      border-radius: 8px;
+      outline: none;
+      background: #111;
+      color: #fff;
+    }
+
+    button {
+      padding: 13px 18px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #fff;
+      color: #111;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: .85;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .buttons button {
+      flex: 1;
+    }
+
+    #result {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #111;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .success {
+      border: 1px solid #3fb950;
+    }
+
+    .error {
+      border: 1px solid #f85149;
+    }
+
+    .domains {
+      margin-top: 25px;
+      color: #888;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    code {
+      color: #ddd;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <h1>🔗 Link4M Handler</h1>
+
+    <p class="description">
+      Kiểm tra URL Link4M và chuyển hướng tới liên kết hợp lệ.
+    </p>
+
+    <div class="input-group">
+      <input
+        id="urlInput"
+        type="url"
+        placeholder="https://link4m.com/..."
+        autocomplete="off"
+      >
+
+      <button onclick="checkUrl()">
+        Check
+      </button>
+    </div>
+
+    <div class="buttons">
+      <button onclick="redirectUrl()">
+        Redirect
+      </button>
+
+      <button onclick="clearResult()">
+        Clear
+      </button>
+    </div>
+
+    <div id="result"></div>
+
+    <div class="domains">
+      Hỗ trợ:
+      <code>link4m.com</code> ·
+      <code>link4m.net</code> ·
+      <code>link4m.org</code>
+    </div>
+
+  </main>
+
+  <script>
+    const input = document.getElementById("urlInput");
+    const result = document.getElementById("result");
+
+    function getUrl() {
+      const url = input.value.trim();
+
+      if (!url) {
+        showResult("Vui lòng nhập URL.", false);
+        return null;
+      }
+
+      return url;
+    }
+
+    async function checkUrl() {
+      const url = getUrl();
+
+      if (!url) return;
+
+      result.style.display = "block";
+      result.className = "";
+      result.textContent = "Đang kiểm tra...";
+
+      try {
+        const response = await fetch(
+          "/check?url=" + encodeURIComponent(url)
+        );
+
+        const data = await response.json();
+
+        if (!data.isLink4M) {
+          showResult(
+            "❌ URL không thuộc domain Link4M được hỗ trợ.",
+            false
+          );
+          return;
         }
-        
-        // Look for any external link
-        let links = doc.querySelectorAll('a[href^="http"]');
-        for (let l of links) {
-            if (!l.href.includes('link4m') && !l.href.includes('google') && l.href.length > 30) {
-                foundUrl(l.href);
-                return;
-            }
-        }
-        
-        // Check for redirect
-        if (doc.URL && !doc.URL.includes('link4m') && doc.URL.startsWith('http')) {
-            foundUrl(doc.URL);
-            return;
-        }
-        
-    } catch(e) {}
-}
 
-function foundUrl(url) {
-    if (finalUrl === url) return;
-    finalUrl = url;
-    
-    let btn = document.getElementById('btn');
-    document.getElementById('link').textContent = url;
-    document.getElementById('open').href = url;
-    document.getElementById('res').style.display = 'block';
-    document.getElementById('status').textContent = '✅ URL Found!';
-    btn.disabled = false;
-    btn.textContent = '⚡ BYPASS AGAIN';
-}
+        showResult(
+          `
+          <strong>✅ URL hợp lệ</strong><br>
+          Domain: ${escapeHtml(data.hostname)}<br>
+          URL: ${escapeHtml(data.url)}
+          `,
+          true
+        );
 
-function manualBypass(url) {
-    // Fallback: Open in new tab with redirect detection
-    let status = document.getElementById('status');
-    status.innerHTML = `
-        <div style="color:#ff0;text-align:left">
-        <b>Manual Method:</b><br>
-        1. <a href="${url}" target="_blank" style="color:#0f0">Open Link4m in new tab</a><br>
-        2. Complete any captcha/timer<br>
-        3. Copy final URL and paste below:<br>
-        <input id="manual-url" placeholder="Paste final URL here" style="margin-top:5px">
-        <button onclick="foundUrl(document.getElementById('manual-url').value)" style="margin-top:5px">Submit</button>
-        </div>
-    `;
-    document.getElementById('btn').disabled = false;
-    document.getElementById('btn').textContent = '⚡ RETRY';
-}
+      } catch (error) {
+        showResult(
+          "❌ Không thể kết nối tới server.",
+          false
+        );
+      }
+    }
 
-function copy() {
-    navigator.clipboard.writeText(document.getElementById('link').textContent).then(() => alert('Copied!'));
-}
-document.getElementById('url').addEventListener('keypress', e => { if (e.key === 'Enter') start(); });
-</script>
+    function redirectUrl() {
+      const url = getUrl();
+
+      if (!url) return;
+
+      window.location.href =
+        "/redirect?url=" + encodeURIComponent(url);
+    }
+
+    function clearResult() {
+      input.value = "";
+      result.style.display = "none";
+      result.innerHTML = "";
+    }
+
+    function showResult(message, success) {
+      result.style.display = "block";
+      result.className = success ? "success" : "error";
+      result.innerHTML = message;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        checkUrl();
+      }
+    });
+  </script>
+
 </body>
 </html>
